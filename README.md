@@ -16,6 +16,7 @@ Leo, Harry, Yen
 ## Targets
 1. Learn how to play MJ!!!
 2. Keep Coding!
+3. Get an A+ on Computer Programming.
 
 ## Schedule
 | Week | Date  | What we are doing / What we did                          |
