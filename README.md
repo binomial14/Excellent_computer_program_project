@@ -37,6 +37,7 @@ Leo, Harry, Yen
 ### Upload Files
 1. Choose a folder.
 2. Click "**Upload new files**" to upload.
+
 P.S. Allowed to upload several files simultaneously.
 ### Edit Files
 Just click the button with a pencil on the upper right hand side.
