@@ -28,12 +28,14 @@ Leo, Harry, Yen
 | 17   | 01/03 | Demo or Contest (暫定)                                   |
 
 ## How to use github
-### Creating New Folders
+**Always remember to click the green button at the bottom of the page "Commit changes"!**
+### Create New Folders
 1. Click "Create new file".
 2. Before naming the new file, add folder name, enter a slash
 3. Enter the new file's name.
-### Uploading Files
+### Upload Files
 1. Choose a folder.
 2. Click "Upload new files" to upload.
 P.S. Allowed to upload several files simultaneously.
-P.S. Remember to click the green button at the bottom of the page **"Commit changes"**!
+### Edit Files
+Just click the button with a pencil.
