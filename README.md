@@ -31,12 +31,12 @@ Leo, Harry, Yen
 ## How to use github
 **Always remember to click the green "Commit changes" button at the bottom of the page to save files!**
 ### Create New Folders
-1. Click "Create new file".
+1. Click "**Create new file**".
 2. Before naming the new file, add folder name, enter a slash
 3. Enter the new file's name.
 ### Upload Files
 1. Choose a folder.
-2. Click "Upload new files" to upload.
+2. Click "**Upload new files**" to upload.
 P.S. Allowed to upload several files simultaneously.
 ### Edit Files
 Just click the button with a pencil on the upper right hand side.
