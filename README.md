@@ -19,11 +19,11 @@ Demo or Contest: 1/4(水曜日)
 2. Keep Coding!
 
 ## Schedule
-| Week | Date  | What we are doing / What we did |
-| ---- | ----- | ----------------------------------- |
-| 12   | 11/29 | MJtile.h , MJtile.cpp , Shuffler.h |
-|13|||
-|14|||
-|15|||
-|16|||
-|17|||
+| Week | Date  | What we are doing / What we did                          |
+| ---- | ----- | -------------------------------------------------------- |
+| 12   | 11/29 | MJtile.h , MJtile.cpp , Shuffler.h                       |
+| 13   |||
+| 14   |||
+| 15   |||
+| 16   |||
+| 17   | 01/03 | Demo or Contest |
