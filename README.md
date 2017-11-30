@@ -25,4 +25,4 @@ Leo, Harry, Yen
 | 14   | 12/13 |  |
 | 15   | 12/20 |  |
 | 16   | 12/27 |  |
-| 17   | 01/03 | Demo or Contest                                          |
+| 17   | 01/03 | Demo or Contest (暫定)                                   |
