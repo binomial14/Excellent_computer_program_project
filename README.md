@@ -3,7 +3,7 @@ Leo, Harry, Yen
 
 ***共存共榮，榮辱與共***
 
-## Objectives:
+## Objectives
 1. Appreciate an OOP design paradigm
 2. Review all materials we learn during the semester
 3. Implement a medium-scale program step-by-step
@@ -13,7 +13,7 @@ Leo, Harry, Yen
 
 台數計算: http://ezmjtw.tripod.com/mahjong16-big5.htm
 
-## Targets:
+## Targets
 1. Learn how to play MJ!!!
 2. Keep Coding!
 
@@ -26,3 +26,14 @@ Leo, Harry, Yen
 | 15   | 12/20 |  |
 | 16   | 12/27 |  |
 | 17   | 01/03 | Demo or Contest (暫定)                                   |
+
+## How to use github
+### Creating New Folders
+1. Click "Create new file".
+2. Before naming the new file, add folder name, enter a slash
+3. Enter the new file's name.
+### Uploading Files
+1. Choose a folder.
+2. Click "Upload new files" to upload.
+P.S. Allowed to upload several files simultaneously.
+P.S. Remember to click the green button at the bottom of the page **"Commit changes"**!
