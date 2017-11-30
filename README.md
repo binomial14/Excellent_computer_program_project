@@ -1,7 +1,7 @@
 # TaiwanMahjong
 Leo, Harry, Yen
 
-Motto:**共存共榮，榮辱與共**
+***共存共榮，榮辱與共***
 
 ## Objectives:
 1. Appreciate an OOP design paradigm
