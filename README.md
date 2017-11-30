@@ -28,7 +28,7 @@ Leo, Harry, Yen
 | 17   | 01/03 | Demo or Contest (暫定)                                   |
 
 ## How to use github
-**Always remember to click the green button at the bottom of the page "Commit changes"!**
+**Always remember to click the green "Commit changes" button at the bottom of the page to save files!**
 ### Create New Folders
 1. Click "Create new file".
 2. Before naming the new file, add folder name, enter a slash
