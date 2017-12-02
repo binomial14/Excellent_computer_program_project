@@ -2,6 +2,8 @@
 Leo, Harry, Yen
 
 ***共存共榮，榮辱與共***
+## Notifications
+2017/12/02 Lecture Note uploaded
 
 ## Objectives
 1. Appreciate an OOP design paradigm
