@@ -30,6 +30,23 @@ MJtile::~MJtile(){
 	_suit=_rank=_flowernum=_tileId=0;
 }
 
+void MJtile::setfromId(int set_id){
+	_suit=((set_id-1)/4)%4+1;
+	
+	// set _rank
+	_rank=(set_id-1)/16+1;
+	
+	// set _flowernum
+	if((_rank==8 || _rank==9) && (_suit==4)){
+		_flowernum=set_id-(16*(_rank-1)+12);
+	} else {
+		_flowernum=0;
+	}
+	
+	// set _tileId
+	_tileId=set_id;
+}
+
 int MJtile::suit() const{
     return _suit;
 }
@@ -108,18 +125,3 @@ ostream& operator << (ostream& output, const MJtile& tile_out){
 	
 	return output;
 }
-/*
-int main(){
-	
-	int id1, id2;
-    cin>>id1>>id2;
-    MJtile mj1(id1);
-    MJtile mj2(id2);
-    cout<< mj1<<mj2;
-    if(mj1==mj2)
-        cout<<"Same tile."<<endl;
-    else if(mj1!=mj2)
-        cout<<"Different tile."<<endl;
-    return 0;
-}
-*/
