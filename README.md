@@ -4,6 +4,7 @@ Leo, Harry, Yen
 ***共存共榮，榮辱與共***
 ## Announcements
 2017/12/02 Lecture Note uploaded
+
 2017/12/06 MJhand HW released
 
 ## Objectives
