@@ -4,56 +4,115 @@ using namespace std;
 
 #include "MJhand.h"
 
-
+// Compare 
 bool MJcompare(const MJtile& i, const MJtile& j) { 
-}
-
-MJhand::MJhand(){}
-MJhand::MJhand(MJtile* t, int n){
-}
-MJhand::~MJhand(){
-}
-
-int MJhand::faceup_len() const {
-	return 0;
-}
-int MJhand::caneat(const MJtile& t){
-	return 0;
-}
-bool MJhand::canpong(const MJtile& t){
-	return false;
-}
-bool MJhand::cangone(const MJtile& t){
-	return false;
-}
-
-inline bool cmp_tile(MJtile &a,MJtile &b){
-	if(a.suit()!=b.suit()){
-		return a.suit()<b.suit();
+	if((i.suit()) != (j.suit())){
+		return (i.suit()) < (j.suit());
 	}
-	return a.rank()<b.rank();
+	if((i.rank()) != (j.rank())){
+		return (i.rank()) < (j.rank());
+	}
+	return i.getTileId() < j.getTileId();
+}
+
+MJhand::MJhand(){
+    _total_len=_faceup_len=_stage=0;
+    for (int i=0; i<30; i++) {
+        _tiles[i]=MJtile();
+    }
+}
+
+MJhand::MJhand(MJtile* yen, int n){
+    _faceup_len=0;
+    _total_len=n;
+    _stage=0;
+    for (int i=0; i<n; i++) {
+        _tiles[i].setfromId(yen[i].getTileId());
+    }
+}
+
+MJhand::~MJhand(){
+// empty
+}
+
+int MJhand::faceup_len() const{
+    return _faceup_len;
+}
+/*
+int MJhand::caneat(const MJtile& t){
+
+	return 0;
+}*/
+
+bool MJhand::canpong(const MJtile& onemoreyen){
+    int aretherepair=0;
+    for(int i=_faceup_len;i<_total_len;++i){
+    	if(onemoreyen == _tiles[i])aretherepair++;
+    }
+    //cout<<aretherepair<<endl;
+    if(aretherepair<=1 || aretherepair>=3)return 0;
+    else return 1;
+}
+
+bool MJhand::cangone(const MJtile& onemoreyen){
+    int aretherepair=0;
+    for(int i=_faceup_len;i<_total_len;++i){
+    	if(onemoreyen == _tiles[i])aretherepair++;
+    }
+    //cout<<aretherepair<<endl;
+    if(aretherepair<=2 || aretherepair>=4)return 0;
+    else return 1;
 }
 
 void MJhand::arrange(){
-	sort(_tiles,_tiles+_total_len);
+	sort(_tiles+_faceup_len,_tiles+_total_len,MJcompare);
 }
 
 void MJhand::draw(MJtile* mjtiles, int& frontind, int& backind){
+	// mjtiles are shuffled
+	_stage=1;
+	/*while(mjtiles[frontind].flower()){
+		applique()
+	}*/
+
+	_tiles[_total_len].setfromId(mjtiles[frontind].getTileId());
+	++_total_len;
+	++frontind;
 }
-void MJhand::play(int index){
+
+
+MJtile MJhand::play(int index){
+	if(index>=_total_len+_stage-_faceup_len || index<1){
+		MJtile False_Return=MJtile(0); // id=0
+		return False_Return;
+	}
+	MJtile _Play=MJtile(_tiles[_faceup_len+index-1]);
+	for(int i=_faceup_len+index;i<_total_len;++i){
+		_tiles[i-1]=_tiles[i];
+	}
+	--_total_len;
+	_stage=0;
+	arrange();
+	return _Play;
 }
+/*
 void MJhand::faceup(int index){
 }
 void MJhand::applique(int index, MJtile* mjtiles, int& frontind, int& backind){
-}
+}*/
+
 void MJhand::initial(MJtile* mjtiles, int& frontind, int& backind){
+	arrange();
+	
 }
+/*
 void MJhand::eat(const MJtile& t){
 }
 void MJhand::pong(const MJtile& t){
 }
 void MJhand::gone(const MJtile& t){
 }
+*/
 /*
 ostream& operator << (ostream& os, const MJhand& h){
 	
