@@ -90,20 +90,33 @@ MJtile MJhand::play(int index){
 	for(int i=_faceup_len+index;i<_total_len;++i){
 		_tiles[i-1]=_tiles[i];
 	}
-	--_total_len;
+	_total_len--;
 	_stage=0;
 	arrange();
 	return _Play;
 }
-/*
+
 void MJhand::faceup(int index){
+	if(index>=_total_len+_stage-_faceup_len || index<1){
+		return;
+	}
+	MJtile _Faceup=MJtile(_tiles[_faceup_len+index-1]);
+	for(int i=_faceup_len+index-1;i>=_faceup_len;--i){
+		_tiles[i]=_tiles[i-1];
+	}
+	_tiles[0]=_Faceup;
+	_faceup_len++;
+	arrange();
 }
+/*
 void MJhand::applique(int index, MJtile* mjtiles, int& frontind, int& backind){
 }*/
 
 void MJhand::initial(MJtile* mjtiles, int& frontind, int& backind){
 	arrange();
-	
+	// applique
+
+	arrange();
 }
 /*
 void MJhand::eat(const MJtile& t){
