@@ -27,7 +27,7 @@ Leo, Harry, Yen
 | Week | Date  | What we are doing / What we did                          |
 | ---- | ----- | -------------------------------------------------------- |
 | 12   | 11/29 | MJtile.h , MJtile.cpp , Shuffler.h                       |
-| 13   | 12/06 | Exam                                                     |
+| 13   | 12/06 | MJhand.h , MJhand.cpp                                    |
 | 14   | 12/13 |  |
 | 15   | 12/20 |  |
 | 16   | 12/27 |  |
