@@ -1,4 +1,4 @@
-These files have the latest code.
+These files are the latest code.
 
 # MJhand
 1. Harry: arrange(), draw (MJtile* mjtiles, int& frontind, int& backind), play(int), initial(MJtile* , int&, int&)
