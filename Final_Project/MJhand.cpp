@@ -27,8 +27,17 @@ bool MJhand::cangone(const MJtile& t){
 	return false;
 }
 
-void MJhand::arrange(){	
+inline bool cmp_tile(MJtile &a,MJtile &b){
+	if(a.suit()!=b.suit()){
+		return a.suit()<b.suit();
+	}
+	return a.rank()<b.rank();
 }
+
+void MJhand::arrange(){
+	sort(_tiles,_tiles+_total_len);
+}
+
 void MJhand::draw(MJtile* mjtiles, int& frontind, int& backind){
 }
 void MJhand::play(int index){
@@ -237,31 +246,31 @@ ostream& operator << (ostream& os, const MJhand& h){
 		else{
 			switch(h._tiles[i].rank()){
 				case 1:
-					os<<"¤@";
+					os<<"ä¸€";
 					break; 
 				case 2:
-					os<<"¤G";
+					os<<"äºŒ";
 					break; 
 				case 3:
-					os<<"¤T";
+					os<<"ä¸‰";
 					break; 
 				case 4:
-					os<<"¥|";
+					os<<"å››";
 					break; 
 				case 5:
-					os<<"¤­";
+					os<<"äº”";
 					break; 
 				case 6:
-					os<<"¤»";
+					os<<"å…­";
 					break; 
 				case 7:
-					os<<"¤C";
+					os<<"ä¸ƒ";
 					break; 
 				case 8:
-					os<<"¤K";
+					os<<"å…«";
 					break; 
 				case 9:
-					os<<"¤E";
+					os<<"ä¹";
 					break; 
 				default:
 					assert(false); 
@@ -281,22 +290,22 @@ ostream& operator << (ostream& os, const MJhand& h){
 		if(h._tiles[i].suit()==4)
 			switch(h._tiles[i].rank()){
 				case 1:
-					os<<"ªF";
+					os<<"æ±";
 					break; 
 				case 2:
-					os<<"«n";
+					os<<"å—";
 					break; 
 				case 3:
-					os<<"¦è";
+					os<<"è¥¿";
 					break; 
 				case 4:
-					os<<"¥_";
+					os<<"åŒ—";
 					break; 
 				case 5:
-					os<<"¤¤";
+					os<<"ä¸­";
 					break; 
 				case 6:
-					os<<"µo";
+					os<<"ç™¼";
 					break; 
 				case 7:
 					os<<"  ";
@@ -304,16 +313,16 @@ ostream& operator << (ostream& os, const MJhand& h){
 				case 8:
 					switch(h._tiles[i].flower()){
 						case 1:
-							os<<"±ö";
+							os<<"æ¢…";
 							break; 
 						case 2:
-							os<<"Äõ";
+							os<<"è˜­";
 							break; 
 						case 3:
-							os<<"¦Ë";
+							os<<"ç«¹";
 							break; 
 						case 4:
-							os<<"µâ";
+							os<<"èŠ";
 							break; 
 						default:
 							assert(false); 
@@ -322,16 +331,16 @@ ostream& operator << (ostream& os, const MJhand& h){
 				case 9:
 					switch(h._tiles[i].flower()){
 						case 1:
-							os<<"¬K";
+							os<<"æ˜¥";
 							break; 
 						case 2:
-							os<<"®L";
+							os<<"å¤";
 							break; 
 						case 3:
-							os<<"¬î";
+							os<<"ç§‹";
 							break; 
 						case 4:
-							os<<"¥V";
+							os<<"å†¬";
 							break; 
 						default:
 							assert(false); 
@@ -343,13 +352,13 @@ ostream& operator << (ostream& os, const MJhand& h){
 		else{
 			switch(h._tiles[i].suit()){
 				case 1:
-					os<<"µ©";
+					os<<"ç­’";
 					break; 
 				case 2:
-					os<<"±ø";
+					os<<"æ¢";
 					break; 
 				case 3:
-					os<<"¸U";
+					os<<"è¬";
 					break; 
 				default:
 					assert(false); 
@@ -365,7 +374,7 @@ ostream& operator << (ostream& os, const MJhand& h){
 			os<<"    ";//4 spaces
 		if(h._stage && i==h._total_len+h._stage-1)
 			os<<"    ";//4 spaces
-		os<<" ¡Ã ";
+		os<<" ï¿£ ";
 	}
 	os<<endl; 
 	return os;
