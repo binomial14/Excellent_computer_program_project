@@ -8,13 +8,16 @@ using namespace std;
 
 // Compare 
 bool MJcompare(const MJtile& i, const MJtile& j) { 
-	if((i.suit()) != (j.suit())){
+	if((i.suit()) != (j.suit())){ // sort by suit
 		return (i.suit()) < (j.suit());
 	}
-	if((i.rank()) != (j.rank())){
+	if((i.rank()) != (j.rank())){ // sort by rank
 		return (i.rank()) < (j.rank());
 	}
-	return i.getTileId() < j.getTileId();
+	if(i.flower()>0 && j.flower()>0 && i.flower()!=j.flower()){ // flower
+		return i.flower() < j.flower();
+	}
+	return i.getTileId() < j.getTileId(); // sort by Id
 }
 
 MJhand::MJhand(){
@@ -42,7 +45,7 @@ int MJhand::faceup_len() const{
 }
 
 int MJhand::caneat(const MJtile& _draw){
-    if(_draw.suit()==4){
+    if(_draw.suit()==4){ // cannot eat wind & flower
     	return 0;
     }
     
@@ -67,8 +70,8 @@ bool MJhand::canpong(const MJtile& onemoreyen){
     for(int i=_faceup_len;i<_total_len;++i){
     	if(onemoreyen == _tiles[i])aretherepair++;
     }
-    //cout<<aretherepair<<endl;
-    if(aretherepair<=1 || aretherepair>=3)return 0;
+
+    if(aretherepair<=1)return 0;
     else return 1;
 }
 
@@ -77,8 +80,8 @@ bool MJhand::cangone(const MJtile& onemoreyen){
     for(int i=_faceup_len;i<_total_len;++i){
     	if(onemoreyen == _tiles[i])aretherepair++;
     }
-    //cout<<aretherepair<<endl;
-    if(aretherepair<=2 || aretherepair>=4)return 0;
+    
+    if(aretherepair<=2)return 0;
     else return 1;
 }
 
@@ -114,8 +117,8 @@ MJtile MJhand::play(int index){
 	_stage=0;
 	arrange();
 
-	printf("_total_len = %d , _stage = %d , _faceup_len = %d\n",
-    	_total_len,_stage,_faceup_len);
+	/*printf("_total_len = %d , _stage = %d , _faceup_len = %d\n",
+    	_total_len,_stage,_faceup_len);*/
 
 	return _Play;
 }
@@ -136,7 +139,7 @@ void MJhand::faceup(int index){
 
 void MJhand::applique(int index, MJtile* mjtiles, int& frontind, int& backind){
 	// index starts from 0
-	if(index<_faceup_len || index>_total_len+_stage)return;
+	if(index<_faceup_len || index>=_total_len+_stage)return;
 	if(_tiles[index].flower()==false)return;
 	if(backind<frontind)return;
 
@@ -156,12 +159,10 @@ void MJhand::initial(MJtile* mjtiles, int& frontind, int& backind){
 			if(_tiles[i].flower()){
 				applique(i,mjtiles,frontind,backind);
 				++count_flowers;
-				// 11
 				//++_total_len;
 				break;
 			}
 		}
-		//puts("jizz");
 	}while(count_flowers>0);
 	
 	arrange();
@@ -185,8 +186,8 @@ void MJhand::pong(const MJtile& _draw){
     		}
     	}
     }
-    printf("_total_len = %d , _stage = %d , _faceup_len = %d\n",
-    	_total_len,_stage,_faceup_len);
+    /*printf("_total_len = %d , _stage = %d , _faceup_len = %d\n",
+    	_total_len,_stage,_faceup_len);*/
 }
 /*void MJhand::gone(const MJtile& t){
 }*/
