@@ -50,7 +50,7 @@ int MJhand::caneat(const MJtile& _draw){
     for(int i=_faceup_len;i<_total_len;++i){
     	if(_tiles[i].suit() == _draw.suit()){
     		int rank_dist=_tiles[i].rank()-_draw.rank();
-    		if(ABS(rank_dist)<=2){
+    		if(_ABS(rank_dist)<=2){
     			++check[rank_dist+2];
     		}
     	}
@@ -83,7 +83,7 @@ bool MJhand::cangone(const MJtile& onemoreyen){
 }
 
 void MJhand::arrange(){
-	sort(_tiles,_tiles+_faceup_len,MJcompare);
+	//sort(_tiles,_tiles+_faceup_len,MJcompare);
 	sort(_tiles+_faceup_len,_tiles+_total_len,MJcompare);
 }
 
@@ -113,6 +113,10 @@ MJtile MJhand::play(int index){
 	//_total_len--;
 	_stage=0;
 	arrange();
+
+	printf("_total_len = %d , _stage = %d , _faceup_len = %d\n",
+    	_total_len,_stage,_faceup_len);
+
 	return _Play;
 }
 
@@ -132,7 +136,7 @@ void MJhand::faceup(int index){
 
 void MJhand::applique(int index, MJtile* mjtiles, int& frontind, int& backind){
 	// index starts from 0
-	if(index<0 || index>_total_len+_stage-_faceup_len)return;
+	if(index<_faceup_len || index>_total_len+_stage)return;
 	if(_tiles[index].flower()==false)return;
 	if(backind<frontind)return;
 
@@ -152,11 +156,12 @@ void MJhand::initial(MJtile* mjtiles, int& frontind, int& backind){
 			if(_tiles[i].flower()){
 				applique(i,mjtiles,frontind,backind);
 				++count_flowers;
+				// 11
 				//++_total_len;
 				break;
 			}
 		}
-
+		//puts("jizz");
 	}while(count_flowers>0);
 	
 	arrange();
@@ -168,12 +173,20 @@ void MJhand::initial(MJtile* mjtiles, int& frontind, int& backind){
 void MJhand::pong(const MJtile& _draw){
 	if(canpong(_draw) == false)return;
 
+	_tiles[_total_len+_stage].setfromId(_draw.getTileId());
+	++_total_len;
+	faceup(_total_len-1+_stage);
+
     for(int cnt=0;cnt<2;++cnt){
     	for(int i=_faceup_len;i<_total_len;++i){
-    		if()
-    		// under contruction
+    		if(_tiles[i] == _draw){
+    			faceup(i);
+    			break;
+    		}
     	}
     }
+    printf("_total_len = %d , _stage = %d , _faceup_len = %d\n",
+    	_total_len,_stage,_faceup_len);
 }
 /*void MJhand::gone(const MJtile& t){
 }*/
