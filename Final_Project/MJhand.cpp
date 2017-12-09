@@ -4,6 +4,8 @@ using namespace std;
 
 #include "MJhand.h"
 
+#define _ABS(_input_x) ((_input_x)>0?(_input_x):(-(_input_x)))
+
 // Compare 
 bool MJcompare(const MJtile& i, const MJtile& j) { 
 	if((i.suit()) != (j.suit())){
@@ -38,11 +40,27 @@ MJhand::~MJhand(){
 int MJhand::faceup_len() const{
     return _faceup_len;
 }
-/*
-int MJhand::caneat(const MJtile& t){
 
-	return 0;
-}*/
+int MJhand::caneat(const MJtile& _draw){
+    if(_draw.suit()==4){
+    	return 0;
+    }
+    
+    int check[5]={0,0,0,0,0}; // -2,-1,0,1,2 -> 0,1,2,3,4
+    for(int i=_faceup_len;i<_total_len;++i){
+    	if(_tiles[i].suit() == _draw.suit()){
+    		int rank_dist=_tiles[i].rank()-_draw.rank();
+    		if(ABS(rank_dist)<=2){
+    			++check[rank_dist+2];
+    		}
+    	}
+    }
+    int _eat_amount=0;
+    if(check[0]>0 && check[1]>0)_eat_amount |= 1; // -2,-1, 0
+    if(check[1]>0 && check[3]>0)_eat_amount |= 2; // -1, 0,+1
+    if(check[3]>0 && check[4]>0)_eat_amount |= 4; //  0,+1,+2
+    return _eat_amount;
+}
 
 bool MJhand::canpong(const MJtile& onemoreyen){
     int aretherepair=0;
@@ -143,14 +161,23 @@ void MJhand::initial(MJtile* mjtiles, int& frontind, int& backind){
 	
 	arrange();
 }
-/*
-void MJhand::eat(const MJtile& t){
+
+/*void MJhand::eat(const MJtile& t){
+}*/
+
+void MJhand::pong(const MJtile& _draw){
+	if(canpong(_draw) == false)return;
+
+    for(int cnt=0;cnt<2;++cnt){
+    	for(int i=_faceup_len;i<_total_len;++i){
+    		if()
+    		// under contruction
+    	}
+    }
 }
-void MJhand::pong(const MJtile& t){
-}
-void MJhand::gone(const MJtile& t){
-}
-*/
+/*void MJhand::gone(const MJtile& t){
+}*/
+
 /*
 ostream& operator << (ostream& os, const MJhand& h){
 	
