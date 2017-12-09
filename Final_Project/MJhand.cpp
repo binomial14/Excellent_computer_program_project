@@ -65,6 +65,7 @@ bool MJhand::cangone(const MJtile& onemoreyen){
 }
 
 void MJhand::arrange(){
+	sort(_tiles,_tiles+_faceup_len,MJcompare);
 	sort(_tiles+_faceup_len,_tiles+_total_len,MJcompare);
 }
 
@@ -101,10 +102,10 @@ void MJhand::faceup(int index){
 		return;
 	}
 	MJtile _Faceup=MJtile(_tiles[_faceup_len+index-1]);
-	for(int i=_faceup_len+index-1;i>=_faceup_len;--i){
+	for(int i=_faceup_len+index-1;i>=_faceup_len+1;--i){
 		_tiles[i]=_tiles[i-1];
 	}
-	_tiles[0]=_Faceup;
+	_tiles[_faceup_len]=_Faceup;
 	_faceup_len++;
 	arrange();
 }
