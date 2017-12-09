@@ -119,8 +119,8 @@ void MJhand::applique(int index, MJtile* mjtiles, int& frontind, int& backind){
 	if(backind<frontind)return;
 
 	faceup(index);
+	_tiles[_total_len+_stage].setfromId(mjtiles[backind].getTileId());
 	++_total_len;
-	_tiles[_total_len].setfromId(mjtiles[backind].getTileId());
 	--backind;
 }
 
@@ -141,7 +141,7 @@ void MJhand::initial(MJtile* mjtiles, int& frontind, int& backind){
 
 	}while(count_flowers>0);
 	
-	//arrange();
+	arrange();
 }
 /*
 void MJhand::eat(const MJtile& t){
