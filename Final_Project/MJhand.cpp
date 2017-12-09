@@ -76,7 +76,7 @@ void MJhand::draw(MJtile* mjtiles, int& frontind, int& backind){
 	}*/
 
 	_tiles[_total_len].setfromId(mjtiles[frontind].getTileId());
-	++_total_len;
+	
 	++frontind;
 }
 
@@ -87,10 +87,10 @@ MJtile MJhand::play(int index){
 		return False_Return;
 	}
 	MJtile _Play=MJtile(_tiles[_faceup_len+index-1]);
-	for(int i=_faceup_len+index;i<_total_len;++i){
+	for(int i=_faceup_len+index;i<_total_len+_stage;++i){
 		_tiles[i-1]=_tiles[i];
 	}
-	_total_len--;
+	//_total_len--;
 	_stage=0;
 	arrange();
 	return _Play;
