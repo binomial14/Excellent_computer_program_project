@@ -14,8 +14,8 @@ bool MJcompare(const MJtile& i, const MJtile& j) {
 	if((i.rank()) != (j.rank())){ // sort by rank
 		return (i.rank()) < (j.rank());
 	}
-	if(i.flower()>0 && j.flower()>0){ // flower
-		return i.flower() < j.flower();
+	if((i.flower())>0 && (j.flower())>0){ // flower
+		return (i.flower()) < (j.flower());
 	}
 	return i.getTileId() < j.getTileId(); // sort by Id
 }
@@ -86,7 +86,7 @@ bool MJhand::cangone(const MJtile& onemoreyen){
 }
 
 void MJhand::arrange(){
-	//sort(_tiles,_tiles+_faceup_len,MJcompare);
+	sort(_tiles,_tiles+_faceup_len,MJcompare);
 	sort(_tiles+_faceup_len,_tiles+_total_len+_stage,MJcompare);
 }
 
