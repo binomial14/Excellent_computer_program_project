@@ -72,15 +72,16 @@ void MJhand::arrange(){
 void MJhand::draw(MJtile* mjtiles, int& frontind, int& backind){
 	// mjtiles are shuffled
 	_stage=1;
-	/*while(mjtiles[frontind].flower()){
-		applique()
-	}*/
-
 	_tiles[_total_len].setfromId(mjtiles[frontind].getTileId());
-	
 	++frontind;
-}
 
+	while(frontind<=backind){
+		if(_tiles[_total_len].flower()){
+			applique(_total_len,mjtiles,frontind,backind);
+		}
+		else break;
+	}
+}
 
 MJtile MJhand::play(int index){
 	if(index>=_total_len+_stage-_faceup_len || index<1){
@@ -98,7 +99,7 @@ MJtile MJhand::play(int index){
 }
 
 void MJhand::faceup(int index){
-	if(index>=_total_len+_stage-_faceup_len || index<1){
+	if(index>_total_len+_stage-_faceup_len || index<1){
 		return;
 	}
 	MJtile _Faceup=MJtile(_tiles[_faceup_len+index-1]);
@@ -109,13 +110,26 @@ void MJhand::faceup(int index){
 	_faceup_len++;
 	arrange();
 }
-/*
+
 void MJhand::applique(int index, MJtile* mjtiles, int& frontind, int& backind){
-}*/
+	if(index<0 || index>_total_len+_stage-_faceup_len)return;
+	if(_tiles[index].flower()==false)return;
+	if(backind<frontind)return;
+
+	faceup(index-_faceup_len+1);
+	++_total_len;
+	_tiles[_total_len].setfromId(mjtiles[backind].getTileId());
+	--backind;
+}
 
 void MJhand::initial(MJtile* mjtiles, int& frontind, int& backind){
 	arrange();
 	// applique
+	for(int i=_faceup_len;i<_total_len;++i){
+		if(_tiles[i].flower()){
+			applique(i,mjtiles,frontind,backind);
+		}
+	}
 
 	arrange();
 }
