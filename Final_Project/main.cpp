@@ -20,32 +20,36 @@ inline void Test_MJhand(){
 	}
     cout<<endl<<Hand_Show;
 
+    int my_play;
+    int _front=11, _back=29;
+    char input_s[10];
+
     cout<<"Hand:\n";
     MJhand Hand=MJhand(all_MJ,10);
-    Hand.arrange();
+    cout<<Hand;
+    Hand.initial(all_MJ,_front,_back);
     cout<<Hand;
 
-    int my_play;
-    int _front=11, _back=20;
-    while(1){
-    	Hand.draw(all_MJ,_front,_back);
-    	cout<<"Draw: front = "<<_front<<", back = "<<_back<<endl<<Hand;
+    while(cin>>input_s){
+        if(input_s[0]=='p'){ // pong
+            cin>>my_play;
+            if(my_play<0)break;
 
-    	cin>>my_play;
-    	if(my_play<0)break;
-
-        MJtile tmp_tile=MJtile(my_play);
-        Hand.pong(tmp_tile);
-        cout<<"Pong "<<my_play<<" :\n"<<Hand;
+            MJtile tmp_tile=MJtile(my_play);
+            Hand.pong(tmp_tile);
+            cout<<"Pong "<<my_play<<" : front = "<<_front<<", back = "<<_back<<endl<<Hand;
+        }
+        Hand.draw(all_MJ,_front,_back);
+        cout<<"Draw: front = "<<_front<<", back = "<<_back<<endl<<Hand;
 
         cin>>my_play;
         if(my_play<0)break;
         
-    	cout<<Hand.play(my_play);
-    	cout<<"Play "<<my_play<<" :\n"<<Hand;
+        cout<<Hand.play(my_play);
+        cout<<"Play "<<my_play<<" :\n"<<Hand;
 
-    	Hand.initial(all_MJ,_front,_back);
-    	cout<<"Initial: front = "<<_front<<", back = "<<_back<<endl<<Hand;
+        Hand.initial(all_MJ,_front,_back);
+        cout<<"Initial: front = "<<_front<<", back = "<<_back<<endl<<Hand;
     }
 }
 
