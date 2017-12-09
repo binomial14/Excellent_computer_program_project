@@ -105,6 +105,7 @@ void MJhand::draw(MJtile* mjtiles, int& frontind, int& backind){
 }
 
 MJtile MJhand::play(int index){
+	// counting from index=1 (1 -> _faceup_len)
 	if(index>=_total_len+_stage-_faceup_len || index<1){
 		MJtile False_Return=MJtile(0); // id=0
 		return False_Return;
@@ -113,7 +114,7 @@ MJtile MJhand::play(int index){
 	for(int i=_faceup_len+index;i<_total_len+_stage;++i){
 		_tiles[i-1]=_tiles[i];
 	}
-	//_total_len--;
+	
 	_stage=0;
 	arrange();
 
@@ -125,11 +126,11 @@ MJtile MJhand::play(int index){
 
 void MJhand::faceup(int index){
 	// counting from _faceup_len
-	if(index>_total_len+_stage || index<_faceup_len){
+	if(index>_total_len+_stage-_faceup_len || index<1){
 		return;
 	}
-	MJtile _Faceup=MJtile(_tiles[index]);
-	for(int i=index;i>=_faceup_len+1;--i){
+	MJtile _Faceup=MJtile(_tiles[_faceup_len+index-1]);
+	for(int i=_faceup_len+index-1;i>=_faceup_len+1;--i){
 		_tiles[i]=_tiles[i-1];
 	}
 	_tiles[_faceup_len]=_Faceup;
@@ -143,7 +144,7 @@ void MJhand::applique(int index, MJtile* mjtiles, int& frontind, int& backind){
 	if(_tiles[index].flower()==false)return;
 	if(backind<frontind)return;
 
-	faceup(index);
+	faceup(index-_faceup_len+1);
 	_tiles[_total_len+_stage].setfromId(mjtiles[backind].getTileId());
 	++_total_len;
 	--backind;
@@ -181,7 +182,7 @@ void MJhand::pong(const MJtile& _draw){
     for(int cnt=0;cnt<2;++cnt){
     	for(int i=_faceup_len;i<_total_len;++i){
     		if(_tiles[i] == _draw){
-    			faceup(i);
+    			faceup(i-_faceup_len+1);
     			break;
     		}
     	}
