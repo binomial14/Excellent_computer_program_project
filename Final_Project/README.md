@@ -6,4 +6,4 @@ These files are the latest code.
 3. Yen: MJhand(), MJhand(MJtile*, int n), faceup_len(), canpong(const MJtile&), cangone(const MJtile&), 
 
 # Note
-1. 2017/12/09 Pong isn't finish yet, can eat hasn't been tested.
+1. 2017/12/09 21:13 WA(0 pt), needs to be debugged, main.cpp has code for debugging.
