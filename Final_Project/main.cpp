@@ -11,6 +11,7 @@ inline void Test_MJhand(){
 	S.init();
 	MJtile all_MJ[144];
 	S.fill(all_MJ);
+	all_MJ[0].setfromId(141);
 	
 	MJhand Hand_Show=MJhand(all_MJ,30);
     cout<<"Shuffled, front 30:\n";
@@ -31,6 +32,13 @@ inline void Test_MJhand(){
     cout<<Hand;
 
     while(cin>>input_s){
+        if(input_s[0]=='e'){ // check eat?
+            cin>>my_play;
+            if(my_play<0)break;
+            MJtile tmp_tile=MJtile(my_play);
+            cout<<Hand.caneat(tmp_tile);
+            continue;
+        }
         if(input_s[0]=='p'){ // pong
             cin>>my_play;
             if(my_play<0)break;
