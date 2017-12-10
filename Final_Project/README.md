@@ -7,3 +7,4 @@ These files are the latest code.
 
 # Note
 1. 2017/12/09 21:13 WA(0 pt), needs to be debugged, main.cpp has code for debugging.
+2. 2017/12/10 14:49 MJhand.cpp AC!
