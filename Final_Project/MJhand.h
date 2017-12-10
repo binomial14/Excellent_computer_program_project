@@ -14,7 +14,7 @@ class MJhand{
 	friend ostream& operator << (ostream&, const MJhand&);
 public:
 	MJhand();
-	MJhand(MJtile*);
+	MJhand(MJtile*, int);
 	~MJhand();
 	
 	int faceup_len() const ;
@@ -22,19 +22,21 @@ public:
 	int caneat(const MJtile&);
 	bool canpong(const MJtile&);
 	bool cangone(const MJtile&);
-	bool canhu(const MJtile&);
+	//bool canhu(const MJtile&);
 	
 	void arrange();
 	void draw(MJtile* , int&, int&);
-	void play(int);
+	MJtile play(int);
 	void faceup(int);
 	void applique(int, MJtile* , int&, int&);
 	void initial(MJtile* , int&, int&);
 	
-	void eat(const MJtile&);
+	//void eat(const MJtile&);
 	void pong(const MJtile&);
-	void gone(const MJtile&);
-	bool hu(const MJtile&);
+	//void minggone(const MJtile&);
+	//void angone(const MJtile&);
+	//void bugone(const MJtile&);
+	//bool hu(const MJtile&);
 	
 	
 private:
