@@ -10,6 +10,7 @@
 using namespace std;
 
 #include "MJtile.h" 
+#include "MJcollection.h" 
 class MJhand{
 	friend ostream& operator << (ostream&, const MJhand&);
 public:
@@ -17,25 +18,29 @@ public:
 	MJhand(MJtile*, int);
 	~MJhand();
 	
-	int faceup_len() const ;
+	int total_len() const;
+	int faceup_len() const;
+	bool stage() const;
 	
 	int caneat(const MJtile&);
 	bool canpong(const MJtile&);
-	bool cangone(const MJtile&);
+	bool canminggone(const MJtile&);
+	bool canangone(const MJtile&);
+	bool canbugone(const MJtile&);
 	//bool canhu(const MJtile&);
 	
 	void arrange();
-	void draw(MJtile* , int&, int&);
+	void draw(MJcollection&);
 	MJtile play(int);
 	void faceup(int);
-	void applique(int, MJtile* , int&, int&);
-	void initial(MJtile* , int&, int&);
+	void applique(int, MJcollection&);
+	void initial(MJcollection&);
 	
-	//void eat(const MJtile&);
+	void eat(const MJtile&, int);
 	void pong(const MJtile&);
-	//void minggone(const MJtile&);
-	//void angone(const MJtile&);
-	//void bugone(const MJtile&);
+	void minggone(const MJtile&, MJcollection&);
+	void angone(int, MJcollection&);
+	void bugone(int, MJcollection&);
 	//bool hu(const MJtile&);
 	
 	
