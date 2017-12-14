@@ -110,3 +110,22 @@ bool MJhand::cangone(const MJtile& onemoreyen){
     }
     return 0;
 }
+
+bool MJhand::canangone(const MJtile& onemoreyen){
+    int aretherepair=0;
+    for(int i=_faceup_len;i<_total_len;++i){
+        if(onemoreyen == _tiles[i])aretherepair++;
+    }
+    if(aretherepair<=3)return 0;
+    else return 1;
+}
+
+bool MJhand::canbugone(const MJtile& onemoreyen){
+    for (int i=0; i<_faceup_len; i++) {
+        if (_tiles[i]==_tiles[i+1]&&_tiles[i]==_tiles[i+2]) {
+            if(onemoreyen == _tiles[i]) return 1;
+            else break;
+        }
+    }
+    return 0;
+}
