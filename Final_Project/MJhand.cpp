@@ -3,7 +3,7 @@
 using namespace std;
 
 #include "MJhand.h"
-#include "MJcollection.h"
+//#include "MJcollection.h"
 
 #define _ABS(_input_x) ((_input_x)>0?(_input_x):(-(_input_x)))
 
@@ -197,11 +197,11 @@ void MJhand::initial(MJcollection& _collection){//change
 
 void MJhand::eat(const MJtile& t, int method){
 	int _c_caneat=caneat(t);
-	if(method<1 || method>3)return; // illegal
+	//if(method<1 || method>3)return; // illegal
 	if(method==3)method=4; // 100
 	if(_c_caneat==0)return; // cannot eat
 	if(t.suit()==4)return; // wind or flower
-	if(!(method & _c_caneat))return; // intersect = empty set
+	//if(!(method & _c_caneat))return; // intersect = empty set
 
 	if(((_c_caneat & 1) && (_c_caneat & 2)) || 
 	   ((_c_caneat & 2) && (_c_caneat & 4)) || 
@@ -222,7 +222,7 @@ void MJhand::eat(const MJtile& t, int method){
 			}
 		}
 
-		_tiles[_total_len].setfromId(t.getTileId());
+		_tiles[_total_len]=t;
 		_stage=1;
 		faceup(_total_len-1+_stage-_faceup_len+1);
 
@@ -243,7 +243,7 @@ void MJhand::eat(const MJtile& t, int method){
 			}
 		}
 		
-		_tiles[_total_len].setfromId(t.getTileId());
+		_tiles[_total_len]=t;
 		_stage=1;
 		faceup(_total_len-1+_stage-_faceup_len+1);
 		
@@ -264,7 +264,7 @@ void MJhand::eat(const MJtile& t, int method){
 			}
 		}
 
-		_tiles[_total_len].setfromId(t.getTileId());
+		_tiles[_total_len]=t;
 		_stage=1;
 		faceup(_total_len-1+_stage-_faceup_len+1);
 
@@ -342,12 +342,12 @@ void MJhand::angone(int index, MJcollection& _collection){
 
     arrange();
 
-    //_total_len++;
+    _total_len++;
     
     draw(_collection);
     
     //_stage = 1;
-    _total_len++;
+    //_total_len++;
 }
 
 void MJhand::bugone(int index, MJcollection& _collection){
