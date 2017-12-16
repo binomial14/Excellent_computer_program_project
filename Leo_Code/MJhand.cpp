@@ -197,8 +197,30 @@ void MJhand::pong(const MJtile& _draw){
     /*printf("_total_len = %d , _stage = %d , _faceup_len = %d\n",
     	_total_len,_stage,_faceup_len);*/
 }
-/*void MJhand::gone(const MJtile& t){
- }*/
+
+void MJhand::bugone(int _ind, MJcollection& _collection){
+    if(canbugone(_ind)==false)return;//can't bugone
+    
+    MJtile t = _tiles[_faceup_len+_ind-1];
+    for(int i = 0;i < _faceup_len; i++){
+        if(_tiles[i].rank() == t.rank() && _tiles[i].suit()== t.suit()){
+            MJtile tmp[30];
+            for(int j = i+3;j<_total_len;j++){//make a copy of the tiles after the original PONG
+                tmp[j] = _tiles[j];
+            }
+            _tiles[i+3] = t;
+            for(int k = i+4; k < _total_len+1; k++){
+                _tiles[k] = tmp[k-1];
+            }
+            break;
+        }
+    }
+    draw(_collection);
+    
+    _stage = 1;
+    _total_len += 1;
+}
+
 
 /*
  ostream& operator << (ostream& os, const MJhand& h){
