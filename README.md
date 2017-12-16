@@ -17,6 +17,8 @@ Leo, Harry, Yen
 
 台數計算: http://ezmjtw.tripod.com/mahjong16-big5.htm
 
+胡牌密技：http://ezmjtw.tripod.com/mahjongskill-big5.htm
+
 ## Targets
 1. Learn how to play MJ!!!
 2. Keep Coding!
@@ -28,8 +30,8 @@ Leo, Harry, Yen
 | ---- | ----- | -------------------------------------------------------- |
 | 12   | 11/29 | MJtile.h , MJtile.cpp , Shuffler.h                       |
 | 13   | 12/06 | MJhand.h , MJhand.cpp                                    |
-| 14   | 12/13 |  |
-| 15   | 12/20 |  |
+| 14   | 12/13 | MJcollection.h , MJhand.cpp                              |
+| 15   | 12/20 |  |
 | 16   | 12/27 |  |
 | 17   | 01/03 | Demo or Contest (暫定)                                   |
 
