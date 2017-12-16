@@ -9,3 +9,4 @@ These files are the latest code.
 1. 2017/12/09 21:13 WA(0 pt), needs to be debugged, main.cpp has code for debugging.
 2. 2017/12/10 14:49 MJhand.cpp AC!
 3. 2017/12/13 19:29 MJcollection.h AC!
+4. 2017/12/16 23:45 MJhand.cpp RE(40pt) -> eat is correct
