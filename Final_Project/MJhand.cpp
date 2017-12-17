@@ -75,6 +75,7 @@ int MJhand::caneat(const MJtile& _draw){
 }
 
 bool MJhand::canpong(const MJtile& onemoreyen){
+	if(onemoreyen.flower()>0)return 0;
     int aretherepair=0;
     for(int i=_faceup_len;i<_total_len;++i){
     	if(onemoreyen == _tiles[i])aretherepair++;
@@ -85,6 +86,7 @@ bool MJhand::canpong(const MJtile& onemoreyen){
 }
 
 bool MJhand::canminggone(const MJtile& onemoreyen){
+	if(onemoreyen.flower()>0)return 0;
     int aretherepair=0;
     for(int i=_faceup_len;i<_total_len;++i){
     	if(onemoreyen == _tiles[i])aretherepair++;
@@ -95,8 +97,9 @@ bool MJhand::canminggone(const MJtile& onemoreyen){
 }
 
 bool MJhand::canangone(const MJtile& onemoreyen){
+	if(onemoreyen.flower()>0)return 0;
     int aretherepair=0;
-    for(int i=_faceup_len;i<_total_len;++i){
+    for(int i=_faceup_len;i<_total_len+_stage;++i){
         if(onemoreyen == _tiles[i])aretherepair++;
     }
     if(aretherepair<=3)return 0;
@@ -104,6 +107,7 @@ bool MJhand::canangone(const MJtile& onemoreyen){
 }
 
 bool MJhand::canbugone(const MJtile& onemoreyen){
+	if(onemoreyen.flower()>0)return 0;
     for (int i=0; i<_faceup_len-2; i++) {
         if (_tiles[i]==_tiles[i+1] && _tiles[i]==_tiles[i+2]) {
             if(onemoreyen == _tiles[i]) return 1;
@@ -114,11 +118,10 @@ bool MJhand::canbugone(const MJtile& onemoreyen){
 }
 
 void MJhand::arrange(){
-	sort(_tiles+_faceup_len,_tiles+_total_len+_stage,MJcompare);
+	sort(_tiles+_faceup_len,_tiles+_total_len/*+_stage*/,MJcompare);
 }
 
 void MJhand::draw(MJcollection& _collection){//change
-    // mjtiles are shuffled
     _stage=1;
     _tiles[_total_len] = _collection.drawfronttile();
     while(_collection.size()>=1){
@@ -197,11 +200,10 @@ void MJhand::initial(MJcollection& _collection){//change
 
 void MJhand::eat(const MJtile& t, int method){
 	int _c_caneat=caneat(t);
-	//if(method<1 || method>3)return; // illegal
+	
 	if(method==3)method=4; // 100
 	if(_c_caneat==0)return; // cannot eat
 	if(t.suit()==4)return; // wind or flower
-	//if(!(method & _c_caneat))return; // intersect = empty set
 
 	if(((_c_caneat & 1) && (_c_caneat & 2)) || 
 	   ((_c_caneat & 2) && (_c_caneat & 4)) || 
@@ -212,68 +214,26 @@ void MJhand::eat(const MJtile& t, int method){
 	else {
 		method=_c_caneat;
 	}
-	
-	if(method == 1){
-		for(int i=_faceup_len;i<_total_len+_stage;++i){
-			if((_tiles[i].suit() != t.suit()) || (_tiles[i].suit()==4))continue;
-			if(_tiles[i].rank()==t.rank()-2){
-				faceup(i-_faceup_len+1);
-				break;
-			}
-		}
 
-		_tiles[_total_len]=t;
-		_stage=1;
-		faceup(_total_len-1+_stage-_faceup_len+1);
+	int _m_pos[4][2]={{-2,-1},{-1,1},{0,0},{1,2}};
 
-		for(int i=_faceup_len;i<_total_len+_stage;++i){
-			if((_tiles[i].suit() != t.suit()) || (_tiles[i].suit()==4))continue;
-			if(_tiles[i].rank()==t.rank()-1){
-				faceup(i-_faceup_len+1);
-				break;
-			}
+	for(int i=_faceup_len;i<_total_len+_stage;++i){
+		if((_tiles[i].suit() != t.suit()) || (_tiles[i].suit()==4))continue;
+		if(_tiles[i].rank()==t.rank()+_m_pos[method-1][0]){
+			faceup(i-_faceup_len+1);
+			break;
 		}
 	}
-	else if(method == 2){
-		for(int i=_faceup_len;i<_total_len+_stage;++i){
-			if((_tiles[i].suit() != t.suit()) || (_tiles[i].suit()==4))continue;
-			if(_tiles[i].rank()==t.rank()-1){
-				faceup(i-_faceup_len+1);
-				break;
-			}
-		}
-		
-		_tiles[_total_len]=t;
-		_stage=1;
-		faceup(_total_len-1+_stage-_faceup_len+1);
-		
-		for(int i=_faceup_len;i<_total_len+_stage;++i){
-			if((_tiles[i].suit() != t.suit()) || (_tiles[i].suit()==4))continue;
-			if(_tiles[i].rank()==t.rank()+1){
-				faceup(i-_faceup_len+1);
-				break;
-			}
-		}
-	}
-	else if(method == 4){
-		for(int i=_faceup_len;i<_total_len;++i){
-			if((_tiles[i].suit() != t.suit()) || (_tiles[i].suit()==4))continue;
-			if(_tiles[i].rank()==t.rank()+1){
-				faceup(i-_faceup_len+1);
-				break;
-			}
-		}
 
-		_tiles[_total_len]=t;
-		_stage=1;
-		faceup(_total_len-1+_stage-_faceup_len+1);
+	_tiles[_total_len]=t;
+	_stage=1;
+	faceup(_total_len-1+_stage-_faceup_len+1);
 
-		for(int i=_faceup_len;i<_total_len;++i){
-			if((_tiles[i].suit() != t.suit()) || (_tiles[i].suit()==4))continue;
-			if(_tiles[i].rank()==t.rank()+2){
-				faceup(i-_faceup_len+1);
-				break;
-			}
+	for(int i=_faceup_len;i<_total_len+_stage;++i){
+		if((_tiles[i].suit() != t.suit()) || (_tiles[i].suit()==4))continue;
+		if(_tiles[i].rank()==t.rank()+_m_pos[method-1][1]){
+			faceup(i-_faceup_len+1);
+			break;
 		}
 	}
 }
@@ -299,7 +259,7 @@ void MJhand::pong(const MJtile& _draw){
     	_total_len,_stage,_faceup_len);*/
 }
 
-void MJhand::minggone(const MJtile& _draw, MJcollection& cutegf){
+void MJhand::minggone(const MJtile& _draw, MJcollection& _collection){
     if(canminggone(_draw) == false)return;
     for(int cnt=0;cnt<3;++cnt){
         for(int i=_faceup_len;i<_total_len;++i){
@@ -312,11 +272,18 @@ void MJhand::minggone(const MJtile& _draw, MJcollection& cutegf){
         _tiles[_total_len].setfromId(_draw.getTileId());
         ++_total_len;
         //_stage=1;
-        faceup(_total_len-1+_stage-_faceup_len+1);
+        faceup(_total_len-1-_faceup_len+1);
     }
     arrange();
-    draw(cutegf);
-    //++_total_len;
+
+    _stage=1;
+    _tiles[_total_len] = _collection.drawbacktile();
+    while(_collection.size()>=1){
+        if(_tiles[_total_len].flower()){
+            applique(_total_len,_collection);
+        }
+        else break;
+    }
 }
 
 void MJhand::angone(int index, MJcollection& _collection){
@@ -336,18 +303,24 @@ void MJhand::angone(int index, MJcollection& _collection){
         	}
     	}
     }
-    //_faceup_len++;
-    //_total_len++;
-    //_stage=0;
+
+    /*if(_stage==1){
+    	_total_len++;
+    	_stage=0;
+    }*/
+
+	_total_len++;
 
     arrange();
 
-    _total_len++;
-    
-    draw(_collection);
-    
-    //_stage = 1;
-    //_total_len++;
+    _stage=1;
+    _tiles[_total_len] = _collection.drawbacktile();
+    while(_collection.size()>=1){
+        if(_tiles[_total_len].flower()){
+            applique(_total_len,_collection);
+        }
+        else break;
+    }
 }
 
 void MJhand::bugone(int index, MJcollection& _collection){
@@ -371,17 +344,20 @@ void MJhand::bugone(int index, MJcollection& _collection){
         }
     }
     _faceup_len++;
-    //_total_len++;
-    //_stage=0;
+    _total_len++;
+    _stage=0;
 
     arrange();
 
+    _stage=1;
     //_total_len++;
-
-    draw(_collection);
-    
-    //_stage = 1;
-    _total_len++;
+    _tiles[_total_len] = _collection.drawbacktile();
+    while(_collection.size()>=1){
+        if(_tiles[_total_len].flower()){
+            applique(_total_len,_collection);
+        }
+        else break;
+    }
 }
 
 /*
