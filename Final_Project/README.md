@@ -10,3 +10,4 @@ These files are the latest code.
 2. 2017/12/10 14:49 MJhand.cpp AC!
 3. 2017/12/13 19:29 MJcollection.h AC!
 4. 2017/12/16 23:45 MJhand.cpp RE(40pt) -> eat is correct
+5. 2017/12/17 23:55 main.cpp update for debugging, MJhand.cpp WA(80pt) -> angone is wrong...Harry wants to sleep.
