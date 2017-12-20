@@ -110,6 +110,9 @@ bool MJhand::canbugone(const MJtile& onemoreyen){
 	if(onemoreyen.flower()>0)return 0;
     for (int i=0; i<_faceup_len-2; i++) {
         if (_tiles[i]==_tiles[i+1] && _tiles[i]==_tiles[i+2]) {
+        	if(i+3<_faceup_len){
+        		if(_tiles[i+3]==onemoreyen)return 0;
+        	}
             if(onemoreyen == _tiles[i]) return 1;
             // else break;
         }
@@ -242,7 +245,7 @@ void MJhand::pong(const MJtile& _draw){
 	if(canpong(_draw) == false)return;
 
     for(int cnt=0;cnt<2;++cnt){
-    	for(int i=_faceup_len;i<_total_len;++i){
+    	for(int i=_faceup_len;i<_total_len+_stage;++i){
     		if(_tiles[i] == _draw){
     			faceup(i-_faceup_len+1);
     			break;
@@ -287,6 +290,7 @@ void MJhand::minggone(const MJtile& _draw, MJcollection& _collection){
 }
 
 void MJhand::angone(int index, MJcollection& _collection){
+
 	if(index>_total_len+_stage-_faceup_len || index<1)
 		return; // index isn't correct
 
@@ -294,7 +298,7 @@ void MJhand::angone(int index, MJcollection& _collection){
 
     if(canangone(t)==false)
     	return; // can't angone
-
+	
     for(int cnt=0;cnt<4;++cnt){
     	for(int i = _faceup_len;i < _total_len+_stage; i++){
         	if(_tiles[i]==t){
@@ -304,12 +308,10 @@ void MJhand::angone(int index, MJcollection& _collection){
     	}
     }
 
-    /*if(_stage==1){
+    if(_stage==1){
     	_total_len++;
     	_stage=0;
-    }*/
-
-	_total_len++;
+    }
 
     arrange();
 
