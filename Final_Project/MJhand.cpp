@@ -53,6 +53,14 @@ bool MJhand::stage() const{
 	return _stage;
 }
 
+void MJhand::set_faceup_len(int f){
+    _faceup_len = f;
+}
+
+void MJhand::set_stage(bool s){
+    _stage = s;
+}
+
 int MJhand::caneat(const MJtile& _draw){
     if(_draw.suit()==4){ // cannot eat wind & flower
     	return 0;
