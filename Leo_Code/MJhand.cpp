@@ -4,7 +4,7 @@
 using namespace std;
 
 #include "MJhand.h"
-#include "MJcollection.h"
+//#include "MJcollection.h"
 
 #define _ABS(_input_x) ((_input_x)>0?(_input_x):(-(_input_x)))
 
@@ -42,9 +42,27 @@ MJhand::~MJhand(){
     // empty
 }
 
+int MJhand::total_len() const{
+    return _total_len;
+}
+
 int MJhand::faceup_len() const{
     return _faceup_len;
 }
+
+bool MJhand::stage() const{
+    return _stage;
+}
+
+void MJhand::set_faceup_len(int f){
+    _faceup_len = f;
+}
+
+void MJhand::set_stage(bool s){
+    _stage = s;
+}
+
+
 
 int MJhand::caneat(const MJtile& _draw){
     if(_draw.suit()==4){ // cannot eat wind & flower
@@ -68,6 +86,7 @@ int MJhand::caneat(const MJtile& _draw){
 }
 
 bool MJhand::canpong(const MJtile& onemoreyen){
+    if(onemoreyen.flower()>0)return 0;
     int aretherepair=0;
     for(int i=_faceup_len;i<_total_len;++i){
         if(onemoreyen == _tiles[i])aretherepair++;
@@ -77,7 +96,8 @@ bool MJhand::canpong(const MJtile& onemoreyen){
     else return 1;
 }
 
-bool MJhand::cangone(const MJtile& onemoreyen){
+bool MJhand::canminggone(const MJtile& onemoreyen){
+    if(onemoreyen.flower()>0)return 0;
     int aretherepair=0;
     for(int i=_faceup_len;i<_total_len;++i){
         if(onemoreyen == _tiles[i])aretherepair++;
@@ -87,14 +107,32 @@ bool MJhand::cangone(const MJtile& onemoreyen){
     else return 1;
 }
 
+bool MJhand::canangone(const MJtile& onemoreyen){
+    if(onemoreyen.flower()>0)return 0;
+    int aretherepair=0;
+    for(int i=_faceup_len;i<_total_len+_stage;++i){
+        if(onemoreyen == _tiles[i])aretherepair++;
+    }
+    if(aretherepair<=3)return 0;
+    else return 1;
+}
+
+bool MJhand::canbugone(const MJtile& onemoreyen){
+    if(onemoreyen.flower()>0)return 0;
+    for (int i=0; i<_faceup_len-2; i++) {
+        if (_tiles[i]==_tiles[i+1] && _tiles[i]==_tiles[i+2]) {
+            if(onemoreyen == _tiles[i]) return 1;
+            // else break;
+        }
+    }
+    return 0;
+}
+
 void MJhand::arrange(){
-    //sort(_tiles,_tiles+_faceup_len,MJcompare);
-    sort(_tiles+_faceup_len,_tiles+_total_len+_stage,MJcompare);
-    // _stage??
+    sort(_tiles+_faceup_len,_tiles+_total_len/*+_stage*/,MJcompare);
 }
 
 void MJhand::draw(MJcollection& _collection){//change
-    // mjtiles are shuffled
     _stage=1;
     _tiles[_total_len] = _collection.drawfronttile();
     while(_collection.size()>=1){
@@ -171,58 +209,191 @@ void MJhand::initial(MJcollection& _collection){//change
     arrange();
 }
 
-/*void MJhand::eat(const MJtile& t){
- }*/
+void MJhand::eat(const MJtile& t, int method){
+    int _c_caneat=caneat(t);
+    
+    if(method==3)method=4; // 100
+    if(_c_caneat==0)return; // cannot eat
+    if(t.suit()==4)return; // wind or flower
+    
+    if(((_c_caneat & 1) && (_c_caneat & 2)) ||
+       ((_c_caneat & 2) && (_c_caneat & 4)) ||
+       ((_c_caneat & 4) && (_c_caneat & 1))){
+        // at least two methods
+        if((method & _c_caneat)==0)return;
+    }
+    else {
+        method=_c_caneat;
+    }
+    
+    int _m_pos[4][2]={{-2,-1},{-1,1},{0,0},{1,2}};
+    
+    for(int i=_faceup_len;i<_total_len+_stage;++i){
+        if((_tiles[i].suit() != t.suit()) || (_tiles[i].suit()==4))continue;
+        if(_tiles[i].rank()==t.rank()+_m_pos[method-1][0]){
+            faceup(i-_faceup_len+1);
+            break;
+        }
+    }
+    
+    _tiles[_total_len]=t;
+    _stage=1;
+    faceup(_total_len-1+_stage-_faceup_len+1);
+    
+    for(int i=_faceup_len;i<_total_len+_stage;++i){
+        if((_tiles[i].suit() != t.suit()) || (_tiles[i].suit()==4))continue;
+        if(_tiles[i].rank()==t.rank()+_m_pos[method-1][1]){
+            faceup(i-_faceup_len+1);
+            break;
+        }
+    }
+}
 
 void MJhand::pong(const MJtile& _draw){
     if(canpong(_draw) == false)return;
     
-    //cout<<"pong!\n";
-    
     for(int cnt=0;cnt<2;++cnt){
-        for(int i=_faceup_len;i<_total_len;++i){
+        for(int i=_faceup_len;i<_total_len+_stage;++i){
             if(_tiles[i] == _draw){
                 faceup(i-_faceup_len+1);
-                //cout<<"pong!\n";
                 break;
             }
         }
         if(cnt>0)continue;
         _tiles[_total_len].setfromId(_draw.getTileId());
-        //++_total_len;
+        
         _stage=1;
-        faceup(_total_len-1+_stage-_faceup_len+1);
+        faceup(_total_len+_stage-_faceup_len);
     }
     
     /*printf("_total_len = %d , _stage = %d , _faceup_len = %d\n",
     	_total_len,_stage,_faceup_len);*/
 }
 
-void MJhand::bugone(int _ind, MJcollection& _collection){
-    if(canbugone(_ind)==false)return;//can't bugone
+void MJhand::minggone(const MJtile& _draw, MJcollection& _collection){
+    if(canminggone(_draw) == false)return;
+    for(int cnt=0;cnt<3;++cnt){
+        for(int i=_faceup_len;i<_total_len;++i){
+            if(_tiles[i] == _draw){
+                faceup(i-_faceup_len+1);
+                break;
+            }
+        }
+        if(cnt>0)continue;
+        _tiles[_total_len].setfromId(_draw.getTileId());
+        ++_total_len;
+        //_stage=1;
+        faceup(_total_len-1-_faceup_len+1);
+    }
+    arrange();
     
-    MJtile t = _tiles[_faceup_len+_ind-1];
+    _stage=1;
+    _tiles[_total_len] = _collection.drawbacktile();
+    while(_collection.size()>=1){
+        if(_tiles[_total_len].flower()){
+            applique(_total_len,_collection);
+        }
+        else break;
+    }
+}
+
+void MJhand::angone(int index, MJcollection& _collection){
+    if(index>_total_len+_stage-_faceup_len || index<1)
+        return; // index isn't correct
+    
+    MJtile t = _tiles[_faceup_len+index-1];
+    
+    if(canangone(t)==false)
+        return; // can't angone
+    
+    for(int cnt=0;cnt<4;++cnt){
+        for(int i = _faceup_len;i < _total_len+_stage; i++){
+            if(_tiles[i]==t){
+                faceup(i-_faceup_len+1);
+                break;
+            }
+        }
+    }
+    
+    /*if(_stage==1){
+    	_total_len++;
+    	_stage=0;
+     }*/
+    
+    _total_len++;
+    
+    arrange();
+    
+    _stage=1;
+    _tiles[_total_len] = _collection.drawbacktile();
+    while(_collection.size()>=1){
+        if(_tiles[_total_len].flower()){
+            applique(_total_len,_collection);
+        }
+        else break;
+    }
+}
+
+void MJhand::bugone(int index, MJcollection& _collection){
+    if(index>_total_len+_stage-_faceup_len || index<1)
+        return; // index isn't correct
+    
+    MJtile t = _tiles[_faceup_len+index-1];
+    
+    if(canbugone(t)==false)
+        return; // can't bugone
+    
     for(int i = 0;i < _faceup_len; i++){
-        if(_tiles[i].rank() == t.rank() && _tiles[i].suit()== t.suit()){
-            MJtile tmp[30];
-            for(int j = i+3;j<_total_len;j++){//make a copy of the tiles after the original PONG
-                tmp[j] = _tiles[j];
+        if(_tiles[i]==t){
+            // i,i+1,i+2,(i+3) <- target position
+            for(int j=_faceup_len+index-1;j>=i+4;--j){
+                _tiles[j]=_tiles[j-1];
             }
-            _tiles[i+3] = t;
-            for(int k = i+4; k < _total_len+1; k++){
-                _tiles[k] = tmp[k-1];
-            }
+            _tiles[i+3]=t; // set (i+3)=t
+            //_stage = 1;
             break;
         }
     }
-    draw(_collection);
+    _faceup_len++;
+    _total_len++;
+    _stage=0;
     
-    _stage = 1;
-    _total_len += 1;
+    arrange();
+    
+    _stage=1;
+    //_total_len++;
+    _tiles[_total_len] = _collection.drawbacktile();
+    while(_collection.size()>=1){
+        if(_tiles[_total_len].flower()){
+            applique(_total_len,_collection);
+        }
+        else break;
+    }
+}
+
+void MJhand::huother(const MJtile& _draw){
+    if(canhu(_draw == false))return;
+    
+    _stage = 0;
+    _total_len +=1;
+    arrange();
+    for(int i=0;i<_total_len;i++){
+        faceup(i);
+    }
+}
+
+void MJhand::huown(){
+    if(canhu(_tiles[_total_len+_stage-1]) == false)return;
+    
+    _stage = 0;
+    _total_len +=1;
+    arrange();
+    for(int i=0;i<_total_len;i++){
+        faceup(i);
+    }
 }
 
 
-/*
  ostream& operator << (ostream& os, const MJhand& h){
 	
 	//part 1 " __ "
@@ -386,7 +557,7 @@ void MJhand::bugone(int _ind, MJcollection& _collection){
  }
  //*/
 ///*
-ostream& operator << (ostream& os, const MJhand& h){
+/*ostream& operator << (ostream& os, const MJhand& h){
     
     //part 1 " __ "
     for(int i=0;i<h._total_len+h._stage;i++){
