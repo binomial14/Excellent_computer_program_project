@@ -1,5 +1,7 @@
 #include <iostream> 
 #include <algorithm>
+#include <vector>
+#include <cstdio>
 using namespace std;
 
 #include "MJhand.h"
@@ -49,16 +51,20 @@ int MJhand::faceup_len() const{
     return _faceup_len;
 }
 
-bool MJhand::stage() const{
-	return _stage;
-}
-
 void MJhand::set_faceup_len(int f){
     _faceup_len = f;
 }
 
+bool MJhand::stage() const{
+	return _stage;
+}
+
 void MJhand::set_stage(bool s){
     _stage = s;
+}
+
+void MJhand::set_last(const MJtile& _t){
+	_tiles[_total_len-1+_stage]=_t;
 }
 
 int MJhand::caneat(const MJtile& _draw){
@@ -126,6 +132,89 @@ bool MJhand::canbugone(const MJtile& onemoreyen){
         }
     }
     return 0;
+}
+
+bool _check_hu(int _su,int _ts[5][10],int& _pair){
+	// _su   : which suit 
+	// _ts   : 2D-array of tiles left
+	// _pair : if already found a pair, _pair=1, else _pair=0 (pass by ref.)
+
+	// rules : 1. Always let _ts return to the original state
+
+	bool _check_result=false;
+	bool _can_use=false;
+	for(int i=1;i<=9;++i){ // i : each rank
+		if(_ts[_su][i]==0)continue; // no such tile
+		if(_su==4 && i>=8)continue; // flower
+		_can_use=true; // in this round still has tiles 
+		if(_ts[_su][i]>=3){
+			// let it pong
+			_ts[_su][i]-=3;
+
+			_check_result=_check_hu(_su,_ts,_pair);
+
+			_ts[_su][i]+=3;
+			if(_check_result==true)return true;
+		}
+
+		if(_pair==0 && _ts[_su][i]>=2){
+			// let it pair (_pair must be 0 here)
+			_ts[_su][i]-=2;
+			_pair=1;
+
+			_check_result=_check_hu(_su,_ts,_pair);
+
+			_ts[_su][i]+=2;
+			if(_check_result==true)return true; // _pair=1
+			else _pair=0; // _pair=0
+		}
+
+		if(_su==4)continue; // wind can't be eaten
+		if(i+2>9)continue; // exceed length
+		if(_ts[_su][i]>0 && _ts[_su][i+1]>0 && _ts[_su][i+2]>0){
+			// let it eat
+			_ts[_su][i]--; _ts[_su][i+1]--; _ts[_su][i+2]--;
+			
+			_check_result=_check_hu(_su,_ts,_pair);
+
+			_ts[_su][i]++; _ts[_su][i+1]++; _ts[_su][i+2]++;
+			if(_check_result==true)return true;
+		}
+	}
+	if(_can_use==false)return true; // used all tiles
+	else return false;
+}
+
+bool MJhand::canhu(const MJtile& _t){
+	// check range:[_faceup_len, _total_len-1]
+
+	int _count_t[5][10]; // suit:1~4, rank: 1~9
+	// it is no need to consider flowers (suit=4, rank=8 or 9)
+	for(int i=1;i<=4;++i)
+		for(int j=1;j<=9;++j)
+			_count_t[i][j]=0;
+
+	for(int i=_faceup_len;i<_total_len;++i){
+		_count_t[_tiles[i].suit()][_tiles[i].rank()]++;
+	}
+	_count_t[_t.suit()][_t.rank()]++;
+
+	/*for(int i=1;i<=4;++i){
+		for(int j=1;j<=9;++j){
+			cout<<_count_t[i][j]<<" ";
+		}
+		puts("");
+	}*/
+
+	int _check_pair=0;
+	bool _check_result=false;
+	for(int i=1;i<=4;++i){
+		_check_result=_check_hu(i,_count_t,_check_pair);
+		//cout<<"suit: "<<i<<" -> "<<_check_result<<" , pair: "<<_check_pair<<endl;
+		if(_check_result==false)return false;
+	}
+	//if(_check_pair==0)return false;
+	return true;
 }
 
 void MJhand::arrange(){
@@ -370,7 +459,32 @@ void MJhand::bugone(int index, MJcollection& _collection){
     }
 }
 
-/*
+void MJhand::huother(const MJtile& _draw){
+    if(canhu(_draw) == false)return;
+    
+    _tiles[_total_len]=_draw;
+    _stage = 0;
+    _total_len +=1;
+    arrange();
+    int _want_faceup_len=_total_len-_faceup_len;
+    while(_want_faceup_len--){
+    	faceup(1);
+    }
+}
+
+void MJhand::huown(){
+    if(canhu(_tiles[_total_len+_stage-1]) == false)return;
+    
+    _stage = 0;
+    _total_len +=1;
+    arrange();
+    int _want_faceup_len=_total_len-_faceup_len;
+    while(_want_faceup_len--){
+    	faceup(1);
+    }
+}
+
+
 ostream& operator << (ostream& os, const MJhand& h){
 	
 	//part 1 " __ "
@@ -528,169 +642,6 @@ ostream& operator << (ostream& os, const MJhand& h){
 		if(h._stage && i==h._total_len+h._stage-1)
 			os<<"    ";//4 spaces
 		os<<" -- ";
-	}
-	os<<endl; 
-	return os;
-} 
-//*/
-///* 
-ostream& operator << (ostream& os, const MJhand& h){
-	
-	//part 1 " __ "
-	for(int i=0;i<h._total_len+h._stage;i++){
-		if(i==h.faceup_len())
-			os<<"    ";//4 spaces
-		if(h._stage && i==h._total_len+h._stage-1)
-			os<<"    ";//4 spaces
-		os<<" __ ";
-	}
-	os<<endl;
-	
-	//part 2 "| N|"
-	for(int i=0;i<h._total_len+h._stage;i++){
-		if(i==h.faceup_len())
-			os<<"    ";//4 spaces
-		if(h._stage && i==h._total_len+h._stage-1)
-			os<<"    ";//4 spaces
-		os<<"|";
-		if(h._tiles[i].suit()==4){ 
-			if(h._tiles[i].flower())
-				os<<" "<<h._tiles[i].flower();
-			else 
-				os<<"  ";
-		} 
-		else{
-			switch(h._tiles[i].rank()){
-				case 1:
-					os<<"一";
-					break; 
-				case 2:
-					os<<"二";
-					break; 
-				case 3:
-					os<<"三";
-					break; 
-				case 4:
-					os<<"四";
-					break; 
-				case 5:
-					os<<"五";
-					break; 
-				case 6:
-					os<<"六";
-					break; 
-				case 7:
-					os<<"七";
-					break; 
-				case 8:
-					os<<"八";
-					break; 
-				case 9:
-					os<<"九";
-					break; 
-				default:
-					assert(false); 
-			}
-		} 
-		os<<"|";
-	}
-	os<<endl;
-	
-	//part 3 "|XX|"
-	for(int i=0;i<h._total_len+h._stage;i++){
-		if(i==h.faceup_len())
-			os<<"    ";//4 spaces
-		if(h._stage && i==h._total_len+h._stage-1)
-			os<<"    ";//4 spaces
-		os<<"|";
-		if(h._tiles[i].suit()==4)
-			switch(h._tiles[i].rank()){
-				case 1:
-					os<<"東";
-					break; 
-				case 2:
-					os<<"南";
-					break; 
-				case 3:
-					os<<"西";
-					break; 
-				case 4:
-					os<<"北";
-					break; 
-				case 5:
-					os<<"中";
-					break; 
-				case 6:
-					os<<"發";
-					break; 
-				case 7:
-					os<<"  ";
-					break; 
-				case 8:
-					switch(h._tiles[i].flower()){
-						case 1:
-							os<<"梅";
-							break; 
-						case 2:
-							os<<"蘭";
-							break; 
-						case 3:
-							os<<"竹";
-							break; 
-						case 4:
-							os<<"菊";
-							break; 
-						default:
-							assert(false); 
-					} 
-					break; 
-				case 9:
-					switch(h._tiles[i].flower()){
-						case 1:
-							os<<"春";
-							break; 
-						case 2:
-							os<<"夏";
-							break; 
-						case 3:
-							os<<"秋";
-							break; 
-						case 4:
-							os<<"冬";
-							break; 
-						default:
-							assert(false); 
-					} 
-					break; 
-				default:
-					assert(false); 
-			}
-		else{
-			switch(h._tiles[i].suit()){
-				case 1:
-					os<<"筒";
-					break; 
-				case 2:
-					os<<"條";
-					break; 
-				case 3:
-					os<<"萬";
-					break; 
-				default:
-					assert(false); 
-			}
-		} 
-		os<<"|";
-	}
-	os<<endl;
-	
-	//part 4 " -- "
-	for(int i=0;i<h._total_len+h._stage;i++){
-		if(i==h.faceup_len())
-			os<<"    ";//4 spaces
-		if(h._stage && i==h._total_len+h._stage-1)
-			os<<"    ";//4 spaces
-		os<<" ￣ ";
 	}
 	os<<endl; 
 	return os;
