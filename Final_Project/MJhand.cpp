@@ -213,7 +213,6 @@ bool MJhand::canhu(const MJtile& _t){
 		//cout<<"suit: "<<i<<" -> "<<_check_result<<" , pair: "<<_check_pair<<endl;
 		if(_check_result==false)return false;
 	}
-	//if(_check_pair==0)return false;
 	return true;
 }
 
@@ -466,10 +465,6 @@ void MJhand::huother(const MJtile& _draw){
     _stage = 0;
     _total_len +=1;
     arrange();
-    int _want_faceup_len=_total_len-_faceup_len;
-    while(_want_faceup_len--){
-    	faceup(1);
-    }
 }
 
 void MJhand::huown(){
@@ -478,10 +473,6 @@ void MJhand::huown(){
     _stage = 0;
     _total_len +=1;
     arrange();
-    int _want_faceup_len=_total_len-_faceup_len;
-    while(_want_faceup_len--){
-    	faceup(1);
-    }
 }
 
 
