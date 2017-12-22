@@ -10,12 +10,12 @@
 using namespace std;
 
 void Set_MJCol(MJtile *T);
-void Test_MJhand();
 void Test_Week10();
+void Test_Hu();
 
 int main(){
 	//Test_MJhand();
-    Test_Week10();
+    Test_Hu();
 
     return 0;
 }
@@ -36,83 +36,6 @@ void Set_MJCol(MJtile *T){
         T[i].setfromId(_ID);
     }
 
-}
-
-void Test_MJhand(){
-    Shuffler S;
-    S.init();
-    MJtile all_MJ[144];
-    S.fill(all_MJ);
-    //all_MJ[0].setfromId(141);
-
-    for(int i=0;i<30;++i){
-        all_MJ[i].setfromId(i+1);
-    }
-    
-    // Show shuffled tiles
-    MJhand Hand_Show=MJhand(all_MJ,30);
-    cout<<"Shuffled, front 30:\n";
-    cout<<"     ";
-    for(int i=0;i<30;++i){
-        printf("%2d  ",i);
-    }
-    cout<<endl<<Hand_Show;
-
-
-    // Initialize MJcollection
-    int my_play;
-    //int _front=11, _back=29;
-    char input_s[10];
-    MJcollection _MJC=MJcollection(all_MJ);
-
-    // Initialize Hand
-    cout<<"Hand:\n";
-    MJhand Hand=MJhand(all_MJ,10);
-    cout<<Hand;
-    Hand.initial(_MJC);
-    cout<<Hand;
-
-    // Start testing
-    puts("Start Testing:");
-    while(cin>>input_s){
-        if(input_s[0]=='e'){ // check eat?
-            cin>>my_play;
-            if(my_play<0)break;
-            MJtile tmp_tile=MJtile(my_play);
-            cout<<Hand.caneat(tmp_tile);
-            continue;
-        }
-        if(input_s[0]=='p'){ // pong
-            cin>>my_play;
-            if(my_play<0)break;
-
-            MJtile tmp_tile=MJtile(my_play);
-            Hand.pong(tmp_tile);
-            cout<<"Pong "<<my_play<<endl<<Hand;
-        }
-        if(input_s[0]=='b'){ // bugone
-            Hand.draw(_MJC);
-            cout<<"Draw:\n"<<Hand;
-
-            cin>>my_play; // enter index
-            if(my_play<0)break;
-
-            Hand.bugone(my_play,_MJC); // bugone
-
-
-        }
-        Hand.draw(_MJC);
-        cout<<"Draw:\n"<<Hand;
-
-        cin>>my_play;
-        if(my_play<0)break;
-        
-        cout<<Hand.play(my_play);
-        cout<<"Play "<<my_play<<" :\n"<<Hand;
-
-        Hand.initial(_MJC);
-        cout<<"Initial:\n"<<Hand;
-    }
 }
 
 void Test_Week10(){
@@ -157,7 +80,7 @@ void Test_Week10(){
     puts("p : pong");
     puts("m : minggone");
     puts("a : angone");
-    puts("A : angone (draw first)");
+    //puts("A : angone (draw first)");
     puts("b : bugone");
     puts("e : eat");
     puts("Start Testing:");
@@ -192,7 +115,6 @@ void Test_Week10(){
             if(my_play<0)break;
 
             Hand.pong(MJtile(my_play));
-            Hand.draw(_MJC);
             cout<<Hand;
         }
         else if(input_s[0]=='m'){ // minggone
@@ -219,5 +141,63 @@ void Test_Week10(){
             Hand.bugone(my_play,_MJC); // bugone
             cout<<Hand;
         }
+    }
+}
+
+void Test_Hu(){
+    int my_play;
+
+    Shuffler S;
+    S.init();
+    MJtile all_MJ[144];
+    S.fill(all_MJ);
+    //Set_MJCol(all_MJ);
+    MJcollection _MJC=MJcollection(all_MJ);
+
+    cout<<"Set initial length of Hand: ";
+    int H_len;
+    cin>>H_len;
+
+    MJtile _MJs[30];
+    cout<<"Enter "<<H_len<<" tiles: ";
+    for(int i=0;i<H_len;++i){
+        cin>>my_play;
+        _MJs[i].setfromId(my_play);
+    }
+
+    MJhand Hand=MJhand(_MJs,H_len);
+    cout<<"Enter _faceup_len: ";
+    cin>>my_play;
+    Hand.set_faceup_len(my_play);
+    Hand.initial(_MJC);
+    cout<<"Initialized:\n";
+    cout<<Hand;
+
+    cout<<"Enter a kind of hu:\n";
+    cout<<"o : huother\n";
+    cout<<"w : huown\n";
+
+    char input_s[10];
+    cin>>input_s;
+
+    if(input_s[0]=='o'){
+        cout<<"Enter tile Id: ";
+        cin>>my_play;
+
+        Hand.huother(MJtile(my_play));
+
+        cout<<Hand;
+    }
+    else if(input_s[0]=='w'){
+        cout<<"Enter tile Id: ";
+        cin>>my_play;
+
+        Hand.set_stage(1);
+        Hand.set_last(MJtile(my_play));
+
+        Hand.huown();
+
+        cout<<Hand;
+
     }
 }
