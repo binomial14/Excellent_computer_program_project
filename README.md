@@ -31,7 +31,7 @@ Leo, Harry, Yen
 | 12   | 11/29 | MJtile.h , MJtile.cpp , Shuffler.h                       |
 | 13   | 12/06 | MJhand.h , MJhand.cpp                                    |
 | 14   | 12/13 | MJcollection.h , MJhand.cpp                              |
-| 15   | 12/20 |  |
+| 15   | 12/20 | Hu                                                       |
 | 16   | 12/27 |  |
 | 17   | 01/03 | Demo or Contest (暫定)                                   |
 
