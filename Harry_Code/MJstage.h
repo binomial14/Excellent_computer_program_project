@@ -18,13 +18,18 @@ public:
 	~MJstage();
 
 	void Control(int);
-	MJtiles Play_AI(int);
-	MJtiles Play_Human(int);
+	int After_Play_Q();
+	MJtiles Play_AI(int, int);
+	MJtiles Play_Human(int, int);
+	void Human_Strategy(int HU_ID, int position, MJtile t, int &actiontype, int &actionparameter);
 
 	int roll_dice();
 	void init_collection();
+	void give_info(int, MJtile*, int);
 
 	void Print_All(int);
+	void Print_GOD(); // God's view -> for debugging
+	void Show_Result();
 private:
 	vector<MJplayer*> _players;
 	//int rounds;
