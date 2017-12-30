@@ -45,7 +45,7 @@ void MJstage::Control(int _FST_Player){
 
 	// First Player: draw
 	(_players[Now_Player])->P_draw(_MJC);
-	Print_
+	Print_All();
 	if(Now_Player>=0 && Now_Player<human_num){
 		Return_T=Play_Human(Now_Player);
 	}
@@ -53,18 +53,145 @@ void MJstage::Control(int _FST_Player){
 		Return_T=Play_AI(Now_Player);
 	}
 
-	/*for(int i=0;i<4;++i){
-		(_players[i])->getinfo(Now_Player,);
-	}*/
-
-
 	while(1){
 		if(_MJC.size()==0)break; // No more tiles to draw
 
-		(_players[Now_Player])->P_draw(_MJC);
+		bool check_act=After_Play_Q(Now_Player,Now_Actiontype,
+	Now_Actionparameter,Action_T,Return_T);
 
-		MJtiles _PLAY_TILE=
+		if(!check_act){ // no one acts
+			Now_Player=(Now_Player+1)%4;
+		}
+		// here
 	}
+
+}
+
+bool MJstage::After_Play_Q(int& Now_Player,int& Now_Actiontype,
+	int& Now_Actionparameter,MJtiles* Action_T,MJtiles& Return_T){
+
+	bool change_player=false;
+	int _action_list[4];
+	_action_list[Now_Player]=-1;
+	// Ask each player
+	for(int _PID=1;_PID<=3;++_PID){
+		// ask other three players
+		int Next_P=(Now_Player+_PID)%4;
+		if(Next_P>=0 && Next_P<human_num){ // human
+			Human_Strategy(Next_P,Now_Player,Return_T,Now_Actiontype,Now_Actionparameter);
+			_action_list[Next_P]=Now_Actiontype;
+		}
+		else { // AI
+			(_players[Next_P])->strategy(Now_Player,Return_T,Now_Actiontype,Now_Actionparameter);
+			_action_list[Next_P]=Now_Actiontype;
+		}
+	}
+		// See if there's someone who wants to do something
+	bool check_act=false;
+	// Priority: huother > pong = minggone > eat
+	for(int i=0;i<4 && !check_act;++i){
+		if(_action_list[i]==7){
+			// huother
+			(_players[i])->P_huother(Return_T);
+			check_act=true;
+			Now_Player=i;
+			break;
+		}
+	}
+	for(int i=0;i<4 && !check_act;++i){
+		if(_action_list[i]==2){
+			// pong
+			(_players[i])->P_pong(Return_T);
+			check_act=true;
+			Now_Player=i;
+			break;
+		}
+		else if(_action_list[i]==3){
+			// minggone
+			(_players[i])->P_minggone(Return_T,_MJC);
+			check_act=true;
+			Now_Player=i;
+			break;
+		}
+	}
+	for(int i=0;i<4 && !check_act;++i){
+		if(_action_list[i]==1){
+			// eat
+			(_players[i])->P_eat(Return_T);
+			check_act=true;
+			Now_Player=i;
+			break;
+		}
+	}
+
+	return check_act;
+}
+
+void MJstage::Human_Strategy(int HU_ID, int position, MJtile t,
+	int &actiontype, int &actionparameter){
+	// HU_ID:0~3
+	// position: who played
+	// t: played what
+	// actiontype: decide how to act
+	cout<<"What do you want to do? ";
+	vector<int> do_list; do_list.clear();
+	if(position==((HU_ID+4-1)%4) && ((_players[HU_ID])->P_caneat(t))>0){
+		// eat=1
+		do_list.push_back(1);
+	}
+	if((_players[HU_ID])->P_canpong(t)){
+		// pong=2
+		do_list.push_back(2);
+	}
+	if(position!=((HU_ID+4-1)%4) && (_players[HU_ID])->P_canminggone(t)){
+		// minggone=3
+		do_list.push_back(3);
+	}
+	/*if(position!=((HU_ID+4-1)%4) && (_players[HU_ID])->P_canbugone(t)){
+		// bugone=5
+		do_list.push_back(5);
+	}*/
+	if((_players[HU_ID])->P_canhu(t)){
+		// huother=7
+		do_list.push_back(7);
+	}
+	if(do_list.size()==0){
+		actiontype=-1;
+		cout<<"Sadly, you cannot do anything.\n";
+		return;
+	}
+
+	cout<<"Choose the moves you prefer:\n";
+				 cout<<"nothing: -1\n";
+	for(int i=0;i<do_list.size();++i){
+		switch(do_list[i]){
+			case 1:  cout<<"eat:      1\n"; break;
+			case 2:  cout<<"pong:     2\n"; break;
+			case 3:  cout<<"minggone: 3\n"; break;
+			//case 4:  cout<<"angone:   4\n"; break;
+			//case 5:  cout<<"bugone:   5\n"; break;
+			//case 6:  cout<<"applique: 6\n"; break;
+			case 7:  cout<<"huother:  7\n"; break;
+			//case 8:  cout<<"huown:    8\n"; break;
+			default: cout<<"bang!\n";
+		}
+	}
+
+	cout<<"Enter number: ";
+	int _enter_num;
+	while(1){
+		cin>>_enter_num;
+		if(_enter_num==-1)break;
+		bool check_num=false;
+		for(int i=0;i<do_list.size();++i){
+			if(_enter_num==do_list[i]){
+				check_num=true;
+			}
+		}
+		if(check_num)break;
+		else cout<<"Please enter a valid integer: ";
+	}
+	actiontype=_enter_num;
 
 }
 
@@ -92,7 +219,7 @@ int MJstage::roll_dice(){
 	}
 	puts("");
 	
-	return _roll_dice;
+	return _roll_dice; // 1~4
 }
 
 void MJstage::init_collection(){
@@ -113,6 +240,12 @@ void MJstage::init_collection(){
 
 }
 
+void MJstage::give_info(int position, MJtile* ts, int tiles_num){
+	for(int i=0;i<4;++i){
+		(_players[i])->getinfo(position,ts,tiles_num);
+	}
+}
+
 void MJstage::Print_All(int _P_ID){
-	
+
 }
