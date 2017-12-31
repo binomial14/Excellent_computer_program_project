@@ -519,6 +519,9 @@ void MJhand::showhandtoothers(){
             cout << "🀫";
         }
     }
+    if(_stage == 1){
+        cout << "    " << "🀫";
+    }
 
     
     }
