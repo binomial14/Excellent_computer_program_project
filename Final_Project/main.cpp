@@ -2,25 +2,31 @@
 #include <assert.h>
 #include <cstdio>
 
-//#include "MJtile.h"
-#include "MJhand.h"
-#include "Shuffler.h"
-//#include "MJcollection.h"
+#include "MJgame.h"
 
 using namespace std;
 
-void Set_MJCol(MJtile *T);
+/*void Set_MJCol(MJtile *T);
 void Test_Week10();
-void Test_Hu();
+void Test_Hu();*/
+void Real_Game_Test();
 
 int main(){
 	//Test_MJhand();
-    Test_Hu();
+    //Test_Hu();
+	Real_Game_Test();
 
     return 0;
 }
 
-void Set_MJCol(MJtile *T){
+void Real_Game_Test(){
+	MJgame New_Game;
+	New_Game.setting();
+	New_Game.start();
+	New_Game.end();
+}
+
+/*void Set_MJCol(MJtile *T){
     Shuffler S;
     S.init();
     S.fill(T);
@@ -89,8 +95,6 @@ void Test_Week10(){
     char input_s[10];
     while(1){
         // draw first
-        /*Hand.draw(_MJC);
-        cout<<"Draw:\n"<<Hand;*/
 
         cout<<"Enter what you want to do: ";
         cin>>input_s;
@@ -201,3 +205,5 @@ void Test_Hu(){
 
     }
 }
+
+*/
