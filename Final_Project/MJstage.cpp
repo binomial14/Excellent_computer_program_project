@@ -21,6 +21,9 @@ MJstage::MJstage(vector<MJplayer*> &_init_players,int _rounds,int _valofpt,int _
 	for(int i=0;i<_init_players.size();++i){
 		_players.push_back(_init_players[i]);
 	}
+	for(int i=0;i<4;++i){
+		_tmp_tiles[i]=MJtile();
+	}
 }
 
 MJstage::~MJstage(){
@@ -32,15 +35,17 @@ void MJstage::Control(int _FST_Player){
 	// This function is to control the whole game
 
 	// type:do nothing=-1, play=0
-	// type:eat=1 pong=2 minggone=3 angone=4 bugone=5 applique=6
-	// type:huother=7 huown=8
+	//type: nothing=-1 eat=1 pong=2 minggone=3 angone=4 bugone=5 applique=6 hu=7 8=play
 
 	Now_Player=_FST_Player; // Reset Initial Player (0~3)
 	// human players' number: 1~human_num (-> 0~human_num-1)
 	int Now_Actiontype=0; // Action type
-	int Now_Actionparameter=0; // Where are you doing this action
+	int Now_Actionparameter=0; // Where you are doing this action
 	MJtile Action_T[10];
 	MJtile Return_T;
+
+	const int human_ID=0; 
+	// When there is only 1 human player, we choose to show only the human's hand.
 
 	// Initialize everyone's _hand (arrange and applique)
 	(_players[(Now_Player+0)%4])->P_initial(_MJC);
@@ -53,9 +58,9 @@ void MJstage::Control(int _FST_Player){
 	system("cls");
 
 	// First Player: draw
-	cout<<"Player "<<Now_Player<<" draws a tile.\n\n";
+	cout<<"Player "<<Now_Player+1<<" draws a tile.\n\n";
 	(_players[Now_Player])->P_draw(_MJC);
-	Print_GOD();
+	
 	bool check_hu=false;
 	if(Now_Player>=0 && Now_Player<human_num){
 		Return_T=Play_Human(0,check_hu);
@@ -63,14 +68,13 @@ void MJstage::Control(int _FST_Player){
 	else {
 		Return_T=Play_AI(0,check_hu);
 	}
+	//Print_GOD();
+	Print_All(human_ID);
+
 	cout<<"Player "<<Now_Player+1<<" played:\n";
 	cout<<Return_T;
 	system("pause");
 	system("cls");
-
-	//Print_GOD();
-	/*cout<<"Player "<<Now_Player+1<<" played:\n";
-	cout<<Return_T;*/
 
 
 	while(1){
@@ -92,10 +96,24 @@ void MJstage::Control(int _FST_Player){
 		}
 		else { // someone wants to act
 			switch(Now_Actiontype){
-				case 1: (_players[Now_Player])->P_eat(Return_T,Now_Actionparameter); break;
-				case 2: (_players[Now_Player])->P_pong(Return_T); break;
-				case 3: (_players[Now_Player])->P_minggone(Return_T,_MJC); break;
-				case 7: (_players[Now_Player])->P_huother(Return_T); break;
+				case 1:
+					(_players[Now_Player])->P_eat(Return_T,Now_Actionparameter);
+					give_eat(Return_T,Now_Actionparameter);
+					give_info(Now_Player,3);
+					break;
+				case 2:
+					(_players[Now_Player])->P_pong(Return_T);
+					give_pong(Return_T);
+					give_info(Now_Player,3);
+					break;
+				case 3:
+					(_players[Now_Player])->P_minggone(Return_T,_MJC);
+					give_minggone(Return_T);
+					give_info(Now_Player,4);
+					break;
+				case 7:
+					(_players[Now_Player])->P_huother(Return_T);
+					break;
 				default: cout<<"bang!\n";
 			}
 			cout<<"Player "<<Now_Player+1<<" ";
@@ -113,7 +131,8 @@ void MJstage::Control(int _FST_Player){
 			}
 		}
 
-		Print_GOD();
+		//Print_GOD();
+		Print_All(human_ID);
 		system("pause");
 		system("cls");
 		
@@ -130,7 +149,8 @@ void MJstage::Control(int _FST_Player){
 			Return_T=Play_AI(check_act,check_hu);
 		}
 		
-		Print_GOD();
+		//Print_GOD();
+		Print_All(human_ID);
 		cout<<"Player "<<Now_Player+1<<" played:\n";
 		cout<<Return_T;
 
@@ -150,7 +170,8 @@ bool MJstage::After_Play_Q(int& Now_Actiontype,
 
 	bool change_player=false;
 	int _action_list[4];
-	_action_list[Now_Player]=-1;
+	int _param_list[4];
+	_action_list[Now_Player]=_param_list[Now_Player]=-1;
 	bool check_act=false;
 
 	// Ask each player
@@ -160,10 +181,12 @@ bool MJstage::After_Play_Q(int& Now_Actiontype,
 		if(Next_P>=0 && Next_P<human_num){ // human
 			Human_Strategy(Next_P,Now_Player,Return_T,Now_Actiontype,Now_Actionparameter);
 			_action_list[Next_P]=Now_Actiontype;
+			_param_list[Next_P]=Now_Actionparameter;
 		}
 		else { // AI
 			(_players[Next_P])->strategy(Now_Player,Return_T,Now_Actiontype,Now_Actionparameter);
 			_action_list[Next_P]=Now_Actiontype;
+			_param_list[Next_P]=Now_Actionparameter;
 		}
 	}
 		// See if there's someone who wants to do something
@@ -176,6 +199,7 @@ bool MJstage::After_Play_Q(int& Now_Actiontype,
 			//(_players[Next_P])->P_huother(Return_T);
 			Now_Player=Next_P;
 			Now_Actiontype=_action_list[Next_P];
+			Now_Actionparameter=_param_list[Next_P];
 			return true;
 		}
 	}
@@ -186,6 +210,7 @@ bool MJstage::After_Play_Q(int& Now_Actiontype,
 			//(_players[Next_P])->P_pong(Return_T);
 			Now_Player=Next_P;
 			Now_Actiontype=_action_list[Next_P];
+			Now_Actionparameter=_param_list[Next_P];
 			return true;
 		}
 		else if(_action_list[Next_P]==3){
@@ -193,6 +218,7 @@ bool MJstage::After_Play_Q(int& Now_Actiontype,
 			//(_players[Next_P])->P_minggone(Return_T,_MJC);
 			Now_Player=Next_P;
 			Now_Actiontype=_action_list[Next_P];
+			Now_Actionparameter=_param_list[Next_P];
 			return true;
 		}
 	}
@@ -203,6 +229,7 @@ bool MJstage::After_Play_Q(int& Now_Actiontype,
 			//(_players[Next_P])->P_eat(Return_T,Now_Actionparameter);
 			Now_Player=Next_P;
 			Now_Actiontype=_action_list[Next_P];
+			Now_Actionparameter=_param_list[Next_P];
 			return true;
 		}
 	}
@@ -333,39 +360,45 @@ void MJstage::Human_Strategy(int HU_ID, int position, MJtile t,
 
 MJtile MJstage::Play_AI(int play_type,bool &if_hu){
 	// play_type : 0->drew a tile (possible to huown), 1->impossible to huown
-	int _Acttype=0,_Actpar=0;
+	int _Acttype=8,_Actpar=0;
 	MJtile tmp;
 	(_players[Now_Player])->strategy(Now_Player,tmp,_Acttype,_Actpar);
-	if(!play_type && _Acttype==8){
+	if(!play_type && _Acttype==7){
 		(_players[Now_Player])->P_huown();
 		return MJtile();
 	}
-	 
-	MJtile Return_T=(_players[Now_Player])->P_play(_Actpar-(_players[Now_Player])->P_faceup_len()+1);
-	/*cout<<"Player "<<Now_Player+1<<" played :\n";
-	cout<<Return_T;*/
+	
+	MJtile Return_T=(_players[Now_Player])->P_play(_Actpar);
+
 	return Return_T;
 }
 
 MJtile MJstage::Play_Human(int play_type,bool &if_hu){
 	// 
 	cout<<"Your hand:\n";
+	for(int i=0;i<=(_players[Now_Player])->P_faceup_len();++i){
+		cout<<"    ";
+	}
+	int choose_range=(_players[Now_Player])->P_total_len()-(_players[Now_Player])->P_faceup_len()+(_players[Now_Player])->P_stage();
+	for(int i=1;i<choose_range;++i){
+		printf(" %2d ",i);
+	}
+	cout<<"    ";
+	printf(" %2d ",choose_range);
+	cout<<endl;
 	(_players[Now_Player])->Print_Hand();
 
 	int _enter_num=0;
 
 	if(play_type){ // just throw something out
 		cout<<"Which tile do you want to play? ";
-		// needs to be clear for user to choose
-		// Add code here!
 		// _faceup_len ~ _total_len
 		while(1){
 			cin>>_enter_num;
-			if(1<=_enter_num &&
-				(_players[Now_Player])->P_total_len()-(_players[Now_Player])->P_faceup_len()+(_players[Now_Player])->P_stage()>=_enter_num)break;
+			if(1<=_enter_num && choose_range>=_enter_num)break;
 			else {
 				cout<<"Please enter an integer between "<<1;
-				cout<<" and "<<(_players[Now_Player])->P_total_len()-(_players[Now_Player])->P_faceup_len()+(_players[Now_Player])->P_stage()<<endl;
+				cout<<" and "<<choose_range<<endl;
 			}
 		}
 		return (_players[Now_Player])->P_play(_enter_num);
@@ -376,7 +409,7 @@ MJtile MJstage::Play_Human(int play_type,bool &if_hu){
 
 		cout<<"What do you want to do?\n";
 		vector<int> do_list; do_list.clear();
-			cout<<"Play one tile out: 0\n"; do_list.push_back(0);
+
 		if((_players[Now_Player])->P_canangone(last_tile)){
 			do_list.push_back(4);
 			cout<<"angone:            4\n";
@@ -386,9 +419,11 @@ MJtile MJstage::Play_Human(int play_type,bool &if_hu){
 			cout<<"bugone:            5\n";
 		}
 		if((_players[Now_Player])->P_canhu(last_tile)){
-			do_list.push_back(8);
-			cout<<"huown:             8\n";
+			do_list.push_back(7);
+			cout<<"huown:             7\n";
 		}
+			cout<<"Play one tile out: 8\n"; do_list.push_back(8);
+
 		cout<<"Which move do you want to do now? ";
 
 		while(1){
@@ -405,31 +440,32 @@ MJtile MJstage::Play_Human(int play_type,bool &if_hu){
 				cout<<"Please enter a valid integer\n";
 			}
 		}
-		if(_enter_num==0){
+		if(_enter_num==8){
 			cout<<"Which tile do you want to play? ";
-			// needs to be clear for user to choose
-			// Add code here!
 			// _faceup_len ~ _total_len
 			while(1){
 				cin>>_enter_num;
-				if(1<=_enter_num &&
-					(_players[Now_Player])->P_total_len()-(_players[Now_Player])->P_faceup_len()+(_players[Now_Player])->P_stage()>=_enter_num)break;
+				if(1<=_enter_num && choose_range>=_enter_num)break;
 				else {
 					cout<<"Please enter an integer between "<<1;
-					cout<<" and "<<(_players[Now_Player])->P_total_len()-(_players[Now_Player])->P_faceup_len()+(_players[Now_Player])->P_stage()<<endl;
+					cout<<" and "<<choose_range<<endl;
 				}
 			}
 			return (_players[Now_Player])->P_play(_enter_num);
 		}
 		else if(_enter_num==4){
-			(_players[Now_Player])->P_angone((_players[Now_Player])->P_total_len()-(_players[Now_Player])->P_faceup_len(),_MJC);
+			give_angone();
+			give_info(Now_Player,4);
+			(_players[Now_Player])->P_angone(choose_range,_MJC);
 			cout<<"Angone!\n";
 		}
 		else if(_enter_num==5){
-			(_players[Now_Player])->P_bugone((_players[Now_Player])->P_total_len()-(_players[Now_Player])->P_faceup_len(),_MJC);
+			give_bugone((_players[Now_Player])->P_get_tile(choose_range));
+			give_info(Now_Player,4);
+			(_players[Now_Player])->P_bugone(choose_range,_MJC);
 			cout<<"Bugone!\n";
 		}
-		else if(_enter_num==8){
+		else if(_enter_num==7){
 			(_players[Now_Player])->P_huown();
 			if_hu=true;
 			cout<<"Huown!\n";
@@ -455,6 +491,8 @@ int MJstage::roll_dice(){
 	return _roll_dice-1; // 1~4
 }
 
+
+// ===============Initialization=================
 void MJstage::init_collection(){
 	MJtile _all_tiles[144];
 	Shuffler _SF;
@@ -465,7 +503,7 @@ void MJstage::init_collection(){
 	for(int i=1;i<=4;++i){
 		// Initialize each player's _hand;
 		(_players[i-1])->Reset_Hand(_all_tiles+(i-1)*16,16);
-		(_players[i-1])->Print_Hand(); // Debug code
+		//(_players[i-1])->Print_Hand(); // Debug code
 	}
 	// After giving each player 16 tiles -> total gave out 16*4=64 tiles
 	// New front = 64 (because 0~63 has been given out)
@@ -473,16 +511,61 @@ void MJstage::init_collection(){
 
 }
 
-void MJstage::give_info(int position, MJtile* ts, int tiles_num){
+// ===================Giving Information==================
+void MJstage::give_info(int position, int tiles_num){
 	for(int i=0;i<4;++i){
-		(_players[i])->getinfo(position,ts,tiles_num);
+		if(i==position)continue;
+		(_players[i])->getinfo(position,_tmp_tiles,tiles_num);
 	}
 }
 
-void MJstage::Print_All(){
+void MJstage::give_eat(MJtile t,int e_actionparameter){
+	_tmp_tiles[1].setfromId(t.getTileId());
+	if(e_actionparameter==1){
+		_tmp_tiles[0]=MJtile(t.getTileId()-2*16);
+		_tmp_tiles[2]=MJtile(t.getTileId()-1*16);
+	}
+	else if(e_actionparameter==2){
+		_tmp_tiles[0]=MJtile(t.getTileId()-1*16);
+		_tmp_tiles[2]=MJtile(t.getTileId()+1*16);
+	}
+	else{
+		_tmp_tiles[0]=MJtile(t.getTileId()+1*16);
+		_tmp_tiles[2]=MJtile(t.getTileId()+2*16);
+	}
+}
+void MJstage::give_pong(MJtile t){
+	_tmp_tiles[0].setfromId(t.getTileId());
+	_tmp_tiles[1].setfromId(t.getTileId());
+	_tmp_tiles[2].setfromId(t.getTileId());
+}
+void MJstage::give_minggone(MJtile t){
+	_tmp_tiles[0].setfromId(t.getTileId());
+	_tmp_tiles[1].setfromId(t.getTileId());
+	_tmp_tiles[2].setfromId(t.getTileId());
+	_tmp_tiles[3].setfromId(t.getTileId());
+}
+void MJstage::give_angone(){
+	_tmp_tiles[0]=MJtile();
+	_tmp_tiles[1]=MJtile();
+	_tmp_tiles[2]=MJtile();
+	_tmp_tiles[3]=MJtile();
+}
+void MJstage::give_bugone(MJtile t){
+	_tmp_tiles[0].setfromId(t.getTileId());
+	_tmp_tiles[1].setfromId(t.getTileId());
+	_tmp_tiles[2].setfromId(t.getTileId());
+	_tmp_tiles[3].setfromId(t.getTileId());
+}
+void MJstage::give_applique(MJtile t){
+	_tmp_tiles[0].setfromId(t.getTileId());
+}
+
+void MJstage::Print_All(int _PID){
 	for(int i=0;i<4;++i){
 		cout<<"Player "<<i+1<<" :\n";
-		(_players[i])->Print_Hand();
+		if(i==_PID)(_players[i])->Print_Hand();
+		else (_players[i])->P_showhandtoothers();
 	}
 }
 
