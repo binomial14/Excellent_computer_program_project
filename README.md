@@ -32,8 +32,10 @@ Leo, Harry, Yen
 | 13   | 12/06 | MJhand.h , MJhand.cpp                                    |
 | 14   | 12/13 | MJcollection.h , MJhand.cpp                              |
 | 15   | 12/20 | Hu                                                       |
-| 16   | 12/27 |  |
-| 17   | 01/03 | Demo or Contest (暫定)                                   |
+| 16   | 12/27 | Finish MJ Game                                           |
+| 17   | 01/03 | MJ AI and Debug                                          |
+| 18   | 01/10 | Final Exam                                               |
+| 19   | 01/17 | Demo                                                     |
 
 ## How to use github
 **Always remember to click the green "Commit changes" button at the bottom of the page to save files!**
