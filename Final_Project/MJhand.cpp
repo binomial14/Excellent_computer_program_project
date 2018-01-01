@@ -74,6 +74,10 @@ MJtile MJhand::get_last()const{
 	return _tiles[_total_len-1+_stage];
 }
 
+MJtile MJhand::get_tile(int _ID)const{
+	return _tiles[_ID+_faceup_len-1];
+}
+
 int MJhand::caneat(const MJtile& _draw){
     if(_draw.suit()==4){ // cannot eat wind & flower
         return 0;
@@ -506,6 +510,172 @@ MJhand* MJhand::gethuhand(){
     
 }
 
+void MJhand::showhandtoothers()const{
+	//part 1 " __ "
+    for(int i=0;i<_total_len+_stage;i++){
+        if(i==faceup_len())
+            cout<<"    ";//4 spaces
+        if(_stage && i==_total_len+_stage-1)
+            cout<<"    ";//4 spaces
+        cout<<" __ ";
+    }
+    cout<<endl;
+    
+    //part 2 "| N|"
+    for(int i=0;i<_total_len+_stage;i++){
+        if(i==faceup_len())
+            cout<<"    ";//4 spaces
+        if(_stage && i==_total_len+_stage-1)
+            cout<<"    ";//4 spaces
+        cout<<"|";
+        if(!noreveal[i]){
+        	cout<<"##";
+        }
+        else if(_tiles[i].suit()==4){
+            if(_tiles[i].flower())
+                cout<<" "<<_tiles[i].flower();
+            else
+                cout<<"  ";
+        }
+        else{
+            switch(_tiles[i].rank()){
+                case 1:
+                    cout<<" 1";
+                    break;
+                case 2:
+                    cout<<" 2";
+                    break;
+                case 3:
+                    cout<<" 3";
+                    break;
+                case 4:
+                    cout<<" 4";
+                    break;
+                case 5:
+                    cout<<" 5";
+                    break;
+                case 6:
+                    cout<<" 6";
+                    break;
+                case 7:
+                    cout<<" 7";
+                    break;
+                case 8:
+                    cout<<" 8";
+                    break;
+                case 9:
+                    cout<<" 9";
+                    break;
+                default:
+                    assert(false);
+            }
+        }
+        cout<<"|";
+    }
+    cout<<endl;
+    
+    //part 3 "|XX|"
+    for(int i=0;i<_total_len+_stage;i++){
+        if(i==faceup_len())
+            cout<<"    ";//4 spaces
+        if(_stage && i==_total_len+_stage-1)
+            cout<<"    ";//4 spaces
+        cout<<"|";
+        if(!noreveal[i]){
+        	cout<<"##";
+        }
+        else if(_tiles[i].suit()==4)
+            switch(_tiles[i].rank()){
+                case 1:
+                    cout<<"Ea";
+                    break; 
+                case 2:
+                    cout<<"So";
+                    break; 
+                case 3:
+                    cout<<"We";
+                    break; 
+                case 4:
+                    cout<<"No";
+                    break; 
+                case 5:
+                    cout<<"Mi";
+                    break; 
+                case 6:
+                    cout<<"Fa";
+                    break; 
+                case 7:
+                    cout<<"  ";
+                    break; 
+                case 8:
+                    switch(_tiles[i].flower()){
+                        case 1:
+                            cout<<"Me";
+                            break; 
+                        case 2:
+                            cout<<"La";
+                            break; 
+                        case 3:
+                            cout<<"Zu";
+                            break; 
+                        case 4:
+                            cout<<"Ju";
+                            break; 
+                        default:
+                            assert(false); 
+                    } 
+                    break; 
+                case 9:
+                    switch(_tiles[i].flower()){
+                        case 1:
+                            cout<<"Sp";
+                            break; 
+                        case 2:
+                            cout<<"Su";
+                            break; 
+                        case 3:
+                            cout<<"Au";
+                            break; 
+                        case 4:
+                            cout<<"Wi";
+                            break; 
+                        default:
+                            assert(false); 
+                    } 
+                    break; 
+                default:
+                    assert(false); 
+            }
+        else{
+            switch(_tiles[i].suit()){
+                case 1:
+                    cout<<" O";
+                    break; 
+                case 2:
+                    cout<<" I";
+                    break; 
+                case 3:
+                    cout<<" W";
+                    break; 
+                default:
+                    assert(false); 
+            }
+        } 
+        cout<<"|";
+    }
+    cout<<endl;
+    
+    //part 4 " -- "
+    for(int i=0;i<_total_len+_stage;i++){
+        if(i==faceup_len())
+            cout<<"    ";//4 spaces
+        if(_stage && i==_total_len+_stage-1)
+            cout<<"    ";//4 spaces
+        cout<<" -- ";
+    }
+    cout<<endl;
+}
+/*
 void MJhand::showhandtoothers(){
     for(int i = 0;i < _faceup_len;i++){
         if(noreveal[i] == 1){
@@ -528,7 +698,7 @@ void MJhand::showhandtoothers(){
     }
 
     
-}
+}*/
 /*
 ostream& operator << (ostream& os, const MJhand& h){
     
