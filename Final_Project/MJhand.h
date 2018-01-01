@@ -25,6 +25,7 @@ public:
     void set_stage(bool s);
     void set_last(const MJtile&); // debug code
     MJtile get_last()const;
+    MJtile get_tile(int)const; // get a tile by its position (_faceup_len->1)
     
     int caneat(const MJtile&);
     bool canpong(const MJtile&);
@@ -49,7 +50,7 @@ public:
     void huother(const MJtile&);
     void huown();
     MJhand* gethuhand();
-    void showhandtoothers();
+    void showhandtoothers()const;
     
 private:
     int _total_len;
