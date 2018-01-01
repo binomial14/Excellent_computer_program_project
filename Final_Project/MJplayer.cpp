@@ -33,30 +33,26 @@ void MJplayer::Reset_Hand(MJtile* _init_tiles, int _init_tiles_len){
 void MJplayer::strategy(int position, MJtile t, 
 	int &actiontype, int &actionparameter){
 	// do nothing -> brainless AI
+	// type: nothing=0 eat=1 pong=2 minggone=3 angone=4 bugone=5 applique=6 hu=7 8=play
+	// actionparmeter: 
 	if(_hand.canhu(t) && position==_position){ // huown
-		actiontype=8;
+		actiontype=7;
 		return;
 	}
-	if(actiontype==0){
-		actiontype=0;
-		actionparameter=_hand.total_len()-1+_hand.stage();
+	if(actiontype==8){ // play
+		actiontype=8;
+		actionparameter=_hand.total_len()-_hand.faceup_len()+_hand.stage();
 		return;
 	}
 	else {
-		actiontype=-1; // do nothing
+		actiontype=0; // do nothing
 		return;
 	}
-
-	if(t.flower()>0 && position==_position){
-		actiontype=6; // applique
-		return;
-	}
-	
 }
 void MJplayer::getinfo(int position, MJtile* ts, int tiles_num){
-	// fucking empty
+	// tiles_num = how many tiles are involved in this action
+
 }
-//type: eat=1 pong=2 minggone=3 angone=4 bugone=5 applique=6
 
 
 // Hand Functions
@@ -68,6 +64,7 @@ bool MJplayer::P_stage() const                {return _hand.stage();}
 void MJplayer::P_set_stage(bool s)            {_hand.set_stage(s);}
 void MJplayer::P_set_last(const MJtile& _t)   {_hand.set_last(_t);}
 MJtile MJplayer::P_get_last()const            {return _hand.get_last();}
+MJtile MJplayer::P_get_tile(int _ID)const     {return _hand.get_tile(_ID);}
 	
 int MJplayer::P_caneat(const MJtile& _t)      {return _hand.caneat(_t);}
 bool MJplayer::P_canpong(const MJtile& _t)    {return _hand.canpong(_t);}
@@ -94,3 +91,5 @@ void MJplayer::P_bugone(int _ID, MJcollection& _MJ_COL)
 {_hand.bugone(_ID,_MJ_COL);}
 void MJplayer::P_huother(const MJtile& _t)     {_hand.huother(_t);}
 void MJplayer::P_huown()                       {_hand.huown();}
+
+void MJplayer::P_showhandtoothers()const       {_hand.showhandtoothers();}
