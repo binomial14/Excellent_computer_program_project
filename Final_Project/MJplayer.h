@@ -14,7 +14,7 @@ public :
 	void Reset_Hand(MJtile*, int);
 	void strategy(int position, MJtile t, int &actiontype, int &actionparameter);
 	void getinfo(int position, MJtile* ts, int tiles_num);
-	//type: eat=1 pong=2 minggone=3 angone=4 bugone=5 applique=6
+	//type: nothing=0 eat=1 pong=2 minggone=3 angone=4 bugone=5 applique=6 hu=7 8=play
 
 	int P_total_len() const;
 	int P_faceup_len() const;
@@ -23,6 +23,7 @@ public :
 	void P_set_stage(bool s);
 	void P_set_last(const MJtile&); // debug code
 	MJtile P_get_last()const;
+	MJtile P_get_tile(int)const;
 	
 	int P_caneat(const MJtile&);
 	bool P_canpong(const MJtile&);
@@ -45,6 +46,8 @@ public :
 	void P_bugone(int, MJcollection&);
 	void P_huother(const MJtile&);
 	void P_huown();
+
+	void P_showhandtoothers()const;
 
 private :
 	MJhand _hand;
