@@ -15,7 +15,7 @@ int main(){
 }
 
 void Real_Game_Test(){
-  MJgame New_Game;
+	MJgame New_Game;
 	New_Game.setting();
 	New_Game.start();
 	New_Game.end();
